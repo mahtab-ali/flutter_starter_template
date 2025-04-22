@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:line_icons/line_icons.dart';
 
-import '../blocs/localization/localization_bloc.dart';
-import '../blocs/localization/localization_event.dart';
-import '../blocs/theme/theme_bloc.dart';
-import '../blocs/theme/theme_event.dart';
-import '../blocs/theme/theme_state.dart';
-import '../config/app_config.dart';
-import '../i18n/app_localizations.dart';
-import '../themes/app_gradients.dart';
-import '../themes/universal_constants.dart';
-import '../ui/cards/glass_card.dart';
-import '../widgets/app_bar_actions.dart';
+import '../../blocs/localization/localization_bloc.dart';
+import '../../blocs/localization/localization_event.dart';
+import '../../blocs/theme/theme_bloc.dart';
+import '../../blocs/theme/theme_event.dart';
+import '../../blocs/theme/theme_state.dart';
+import '../../config/app_config.dart';
+import '../../i18n/app_localizations.dart';
+import '../../themes/app_gradients.dart';
+import '../../themes/universal_constants.dart';
+import '../../ui/cards/glass_card.dart';
+import '../../widgets/app_bar_actions.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});

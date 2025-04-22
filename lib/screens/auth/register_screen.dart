@@ -13,7 +13,7 @@ import '../../ui/inputs/custom_text_field.dart';
 import '../../utils/toast_util.dart';
 import '../../utils/validators.dart';
 import '../../widgets/app_bar_actions.dart';
-import '../../screens/home_screen.dart';
+import '../home/home_screen.dart';
 import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {

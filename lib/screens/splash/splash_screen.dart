@@ -2,11 +2,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:line_icons/line_icons.dart';
-import '../blocs/auth/app_auth_bloc.dart';
-import '../blocs/auth/auth_state.dart';
-import '../themes/universal_constants.dart';
-import 'auth/login_screen.dart';
-import 'home_screen.dart';
+import 'package:starter_template_flutter/blocs/auth/app_auth_bloc.dart';
+import 'package:starter_template_flutter/blocs/auth/auth_state.dart';
+import 'package:starter_template_flutter/screens/auth/login_screen.dart';
+import 'package:starter_template_flutter/screens/home/home_screen.dart';
+import 'package:starter_template_flutter/themes/universal_constants.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

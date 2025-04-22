@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:line_icons/line_icons.dart';
 
-import '../blocs/auth/app_auth_bloc.dart';
-import '../blocs/auth/auth_event.dart';
-import '../blocs/auth/auth_state.dart';
-import '../i18n/app_localizations.dart';
-import '../themes/universal_constants.dart';
-import '../ui/buttons/primary_button.dart';
-import '../ui/cards/glass_card.dart';
-import '../screens/auth/login_screen.dart';
-import '../utils/toast_util.dart';
-import '../widgets/app_bar_actions.dart';
+import '../../blocs/auth/app_auth_bloc.dart';
+import '../../blocs/auth/auth_event.dart';
+import '../../blocs/auth/auth_state.dart';
+import '../../i18n/app_localizations.dart';
+import '../../themes/universal_constants.dart';
+import '../../ui/buttons/primary_button.dart';
+import '../../ui/cards/glass_card.dart';
+import '../auth/login_screen.dart';
+import '../../utils/toast_util.dart';
+import '../../widgets/app_bar_actions.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
