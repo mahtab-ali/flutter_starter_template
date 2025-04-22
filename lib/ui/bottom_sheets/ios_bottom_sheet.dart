@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import '../../themes/app_gradients.dart';
 import '../../themes/universal_constants.dart';
 
 /// Shows an iOS-style bottom sheet with blur effect on background
@@ -24,66 +23,88 @@ Future<T?> showIosBottomSheet<T>({
     isDismissible: isDismissible,
     enableDrag: enableDrag,
     backgroundColor: Colors.transparent,
-    barrierColor: Colors.black.withOpacity(0.5),
+    // Ensure bottom sheet spans edge-to-edge
+    useRootNavigator: true,
+    barrierColor: theme.colorScheme.onSurface.withAlpha(70),
+    // Remove any internal padding
+    useSafeArea: false,
+    // Extend under the bottom safe area
     builder: (context) {
-      return BackdropFilter(
-        filter: ImageFilter.blur(
-          sigmaX: applyBackgroundBlur ? 5.0 : 0.0,
-          sigmaY: applyBackgroundBlur ? 5.0 : 0.0,
-        ),
-        child: AnimatedPadding(
-          padding: MediaQuery.of(context).viewInsets,
-          duration: const Duration(milliseconds: 100),
-          child: Container(
-            height: height,
-            margin: const EdgeInsets.fromLTRB(
-              UniversalConstants.spacingMedium,
-              0,
-              UniversalConstants.spacingMedium,
-              UniversalConstants.spacingMedium,
+      return AnimatedPadding(
+        padding: MediaQuery.of(context).viewInsets,
+        duration: const Duration(milliseconds: 100),
+        child: Container(
+          height: height,
+          // Remove all margins to make the sheet extend to screen edges
+          margin: EdgeInsets.zero,
+          decoration: BoxDecoration(
+            // Keep rounded corners only at the top
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(UniversalConstants.borderRadiusXLarge),
+              topRight: Radius.circular(UniversalConstants.borderRadiusXLarge),
             ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(
-                UniversalConstants.borderRadiusLarge,
+            gradient:
+                backgroundGradient ??
+                (isDark
+                    ? _createDarkerGradient(isDark: true)
+                    : _createDarkerGradient(isDark: false)),
+            boxShadow: [
+              BoxShadow(
+                blurRadius: 12,
+                spreadRadius: 2,
+                color: theme.colorScheme.onSurface.withAlpha(70),
               ),
-              gradient:
-                  backgroundGradient ??
-                  (isDark
-                      ? AppGradients.glassDark(isDark: isDark)
-                      : AppGradients.glassLight(isDark: isDark)),
-              boxShadow: [
-                BoxShadow(blurRadius: 10, color: Colors.black.withOpacity(0.1)),
-              ],
-            ),
-            child: Column(
-              mainAxisSize:
-                  height != null ? MainAxisSize.max : MainAxisSize.min,
-              children: [
-                if (showDragHandle)
-                  Container(
-                    margin: const EdgeInsets.only(
-                      top: UniversalConstants.spacingSmall,
-                    ),
-                    width: 40,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color:
-                          isDark
-                              ? Colors.white.withOpacity(0.5)
-                              : Colors.black.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(
-                        UniversalConstants.spacingXSmall,
-                      ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: height != null ? MainAxisSize.max : MainAxisSize.min,
+            children: [
+              if (showDragHandle)
+                Container(
+                  margin: const EdgeInsets.only(
+                    top: UniversalConstants.spacingSmall,
+                  ),
+                  width: 40,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.onSurface.withAlpha(70),
+                    borderRadius: BorderRadius.circular(
+                      UniversalConstants.spacingXSmall,
                     ),
                   ),
-                Flexible(child: child),
-              ],
-            ),
+                ),
+              Flexible(child: child),
+            ],
           ),
         ),
       );
     },
   );
+}
+
+/// Creates a gradient with higher opacity for bottom sheets
+Gradient _createDarkerGradient({required bool isDark}) {
+  if (isDark) {
+    // Dark theme gradient with higher opacity
+    return LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        Colors.grey[900]!.withOpacity(0.95),
+        Colors.grey[850]!.withOpacity(0.95),
+      ],
+    );
+  } else {
+    // Light theme gradient with higher opacity
+    return LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        Colors.white.withOpacity(0.95),
+        Colors.grey[100]!.withOpacity(0.95),
+      ],
+    );
+  }
 }
 
 /// A specialized widget to be used inside iOS bottom sheets
@@ -96,7 +117,7 @@ class IosBottomSheetContent extends StatelessWidget {
   final EdgeInsets contentPadding;
 
   const IosBottomSheetContent({
-    Key? key,
+    super.key,
     this.title,
     this.icon,
     required this.child,
@@ -104,10 +125,12 @@ class IosBottomSheetContent extends StatelessWidget {
     this.contentPadding = const EdgeInsets.all(
       UniversalConstants.spacingMedium,
     ),
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -128,8 +151,7 @@ class IosBottomSheetContent extends StatelessWidget {
                 if (title != null)
                   Text(
                     title!,
-                    style: const TextStyle(
-                      fontSize: 18,
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
                   ),

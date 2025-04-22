@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // Added import for SystemChrome
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -40,6 +41,32 @@ class MyApp extends StatelessWidget {
         builder: (context, themeState) {
           return BlocBuilder<LocalizationBloc, LocalizationState>(
             builder: (context, localizationState) {
+              // Determine if dark mode is active
+              final isDarkMode =
+                  themeState.isSystemTheme
+                      ? MediaQuery.platformBrightnessOf(context) ==
+                          Brightness.dark
+                      : themeState.isDarkMode == true;
+
+              // Update status bar styling based on theme
+              SystemChrome.setSystemUIOverlayStyle(
+                isDarkMode
+                    ? const SystemUiOverlayStyle(
+                      statusBarColor: Colors.transparent,
+                      statusBarBrightness: Brightness.dark,
+                      statusBarIconBrightness: Brightness.light,
+                      systemNavigationBarColor: Colors.transparent,
+                      systemNavigationBarIconBrightness: Brightness.light,
+                    )
+                    : const SystemUiOverlayStyle(
+                      statusBarColor: Colors.transparent,
+                      statusBarBrightness: Brightness.light,
+                      statusBarIconBrightness: Brightness.dark,
+                      systemNavigationBarColor: Colors.transparent,
+                      systemNavigationBarIconBrightness: Brightness.dark,
+                    ),
+              );
+
               return MaterialApp(
                 debugShowCheckedModeBanner: false,
                 title: 'Flutter Starter Template',

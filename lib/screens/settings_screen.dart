@@ -12,6 +12,7 @@ import '../i18n/app_localizations.dart';
 import '../themes/app_gradients.dart';
 import '../themes/universal_constants.dart';
 import '../ui/cards/glass_card.dart';
+import '../widgets/app_bar_actions.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -25,17 +26,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final i18n = AppLocalizations.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(i18n.translate('settings')),
         elevation: 0,
         backgroundColor: Colors.transparent,
+        actions: const [AppBarActions()],
       ),
       extendBodyBehindAppBar: true,
       body: Container(
         decoration: BoxDecoration(
-          gradient: AppGradients.accentVertical(isDark: false),
+          gradient: AppGradients.accentVertical(isDark: isDark),
         ),
         child: SafeArea(
           child: SingleChildScrollView(
@@ -44,12 +47,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'App Preferences',
-                    style: TextStyle(
-                      fontSize: 24,
+                    style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: theme.colorScheme.onBackground,
                     ),
                   ),
                   const SizedBox(height: UniversalConstants.spacingLarge),
@@ -66,11 +68,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               padding: const EdgeInsets.all(
                                 UniversalConstants.spacingMedium,
                               ),
-                              child: const Text(
+                              child: Text(
                                 'Theme',
-                                style: TextStyle(
+                                style: theme.textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 18,
                                 ),
                               ),
                             ),
@@ -85,8 +86,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                         ? theme.colorScheme.primary
                                         : null,
                               ),
-                              title: const Text('System Theme'),
-                              subtitle: const Text('Follow device settings'),
+                              title: Text(
+                                'System Theme',
+                                style: theme.textTheme.bodyLarge,
+                              ),
+                              subtitle: Text(
+                                'Follow device settings',
+                                style: theme.textTheme.bodySmall,
+                              ),
                               selected: themeState.isSystemTheme,
                               onTap: () {
                                 context.read<ThemeBloc>().add(UseSystemTheme());
@@ -110,7 +117,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                         ? theme.colorScheme.primary
                                         : null,
                               ),
-                              title: const Text('Light Theme'),
+                              title: Text(
+                                'Light Theme',
+                                style: theme.textTheme.bodyLarge,
+                              ),
                               onTap: () {
                                 context.read<ThemeBloc>().add(
                                   ThemeChanged(isDarkMode: false),
@@ -136,7 +146,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                         ? theme.colorScheme.primary
                                         : null,
                               ),
-                              title: const Text('Dark Theme'),
+                              title: Text(
+                                'Dark Theme',
+                                style: theme.textTheme.bodyLarge,
+                              ),
                               onTap: () {
                                 context.read<ThemeBloc>().add(
                                   ThemeChanged(isDarkMode: true),
@@ -169,9 +182,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           child: Text(
                             i18n.translate('select_language'),
-                            style: const TextStyle(
+                            style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
-                              fontSize: 18,
                             ),
                           ),
                         ),
@@ -184,7 +196,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               'https://flagcdn.com/w80/us.png',
                             ),
                           ),
-                          title: const Text('English'),
+                          title: Text(
+                            'English',
+                            style: theme.textTheme.bodyLarge,
+                          ),
                           onTap: () {
                             context.read<LocalizationBloc>().add(
                               LocaleChanged(languageCode: 'en'),
@@ -192,9 +207,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           },
                           trailing:
                               i18n.locale.languageCode == 'en'
-                                  ? const Icon(
+                                  ? Icon(
                                     LineIcons.check,
-                                    color: Colors.green,
+                                    color: theme.colorScheme.primary,
                                   )
                                   : null,
                         ),
@@ -206,7 +221,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               'https://flagcdn.com/w80/sa.png',
                             ),
                           ),
-                          title: const Text('العربية'),
+                          title: Text(
+                            'العربية',
+                            style: theme.textTheme.bodyLarge,
+                          ),
                           onTap: () {
                             context.read<LocalizationBloc>().add(
                               LocaleChanged(languageCode: 'ar'),
@@ -214,9 +232,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           },
                           trailing:
                               i18n.locale.languageCode == 'ar'
-                                  ? const Icon(
+                                  ? Icon(
                                     LineIcons.check,
-                                    color: Colors.green,
+                                    color: theme.colorScheme.primary,
                                   )
                                   : null,
                         ),
@@ -230,39 +248,65 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Padding(
-                          padding: EdgeInsets.all(
+                        Padding(
+                          padding: const EdgeInsets.all(
                             UniversalConstants.spacingMedium,
                           ),
                           child: Text(
                             'About',
-                            style: TextStyle(
+                            style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
-                              fontSize: 18,
                             ),
                           ),
                         ),
                         const Divider(height: 1),
 
-                        const ListTile(
-                          leading: Icon(LineIcons.info),
-                          title: Text('App Version'),
-                          subtitle: Text('1.0.0'),
+                        ListTile(
+                          leading: Icon(
+                            LineIcons.info,
+                            color: theme.iconTheme.color,
+                          ),
+                          title: Text(
+                            'App Version',
+                            style: theme.textTheme.bodyLarge,
+                          ),
+                          subtitle: Text(
+                            '1.0.0',
+                            style: theme.textTheme.bodySmall,
+                          ),
                         ),
 
                         ListTile(
-                          leading: const Icon(LineIcons.alternateShield),
-                          title: const Text('Privacy Policy'),
-                          trailing: const Icon(LineIcons.angleRight),
+                          leading: Icon(
+                            LineIcons.alternateShield,
+                            color: theme.iconTheme.color,
+                          ),
+                          title: Text(
+                            'Privacy Policy',
+                            style: theme.textTheme.bodyLarge,
+                          ),
+                          trailing: Icon(
+                            LineIcons.angleRight,
+                            color: theme.iconTheme.color,
+                          ),
                           onTap: () {
                             // Open privacy policy
                           },
                         ),
 
                         ListTile(
-                          leading: const Icon(LineIcons.fileAlt),
-                          title: const Text('Terms of Service'),
-                          trailing: const Icon(LineIcons.angleRight),
+                          leading: Icon(
+                            LineIcons.fileAlt,
+                            color: theme.iconTheme.color,
+                          ),
+                          title: Text(
+                            'Terms of Service',
+                            style: theme.textTheme.bodyLarge,
+                          ),
+                          trailing: Icon(
+                            LineIcons.angleRight,
+                            color: theme.iconTheme.color,
+                          ),
                           onTap: () {
                             // Open terms of service
                           },
@@ -273,20 +317,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const SizedBox(height: UniversalConstants.spacingMedium),
 
                   // App Info
-                  const Center(
+                  Center(
                     child: Column(
                       children: [
                         Text(
                           AppConfig.appName,
-                          style: TextStyle(
-                            color: Colors.white,
+                          style: theme.textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.onBackground,
                           ),
                         ),
                         SizedBox(height: UniversalConstants.spacingSmall),
                         Text(
                           'Version 1.0.0',
-                          style: TextStyle(color: Colors.white70),
+                          style: TextStyle(
+                            color: theme.colorScheme.onBackground.withOpacity(
+                              0.7,
+                            ),
+                          ),
                         ),
                       ],
                     ),

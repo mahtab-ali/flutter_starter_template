@@ -19,3 +19,15 @@ class AuthError extends AuthState {
 
   AuthError({required this.message});
 }
+
+class AuthPasswordResetSuccess extends AuthState {
+  final String email;
+
+  AuthPasswordResetSuccess({required this.email});
+}
+
+class AuthPasswordResetFailure extends AuthState {
+  final String error;
+
+  AuthPasswordResetFailure({required this.error});
+}

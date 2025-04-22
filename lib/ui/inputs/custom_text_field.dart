@@ -13,12 +13,14 @@ class CustomTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final VoidCallback? onTap;
   final Function(String)? onChanged;
+  final Function(String)? onFieldSubmitted;
   final FocusNode? focusNode;
   final bool enabled;
   final int? maxLines;
+  final TextInputAction? textInputAction;
 
   const CustomTextField({
-    Key? key,
+    super.key,
     required this.label,
     this.hint = '',
     required this.controller,
@@ -29,10 +31,12 @@ class CustomTextField extends StatelessWidget {
     this.suffixIcon,
     this.onTap,
     this.onChanged,
+    this.onFieldSubmitted,
     this.focusNode,
     this.enabled = true,
     this.maxLines = 1,
-  }) : super(key: key);
+    this.textInputAction,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -59,9 +63,11 @@ class CustomTextField extends StatelessWidget {
           validator: validator,
           onTap: onTap,
           onChanged: onChanged,
+          onFieldSubmitted: onFieldSubmitted,
           focusNode: focusNode,
           enabled: enabled,
           maxLines: maxLines,
+          textInputAction: textInputAction,
           decoration: InputDecoration(
             hintText: hint,
             prefixIcon: prefixIcon,

@@ -51,13 +51,6 @@ class GlassCard extends StatelessWidget {
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
               width: 0.5,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 5,
-                spreadRadius: 1,
-              ),
-            ],
           ),
           child: child,
         ),

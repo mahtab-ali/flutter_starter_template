@@ -6,7 +6,7 @@ class AppColors {
   static const Color primaryDark = Color(0xFFBB86FC);
 
   // Background Colors
-  static const Color backgroundLight = Color(0xFFF5F5F5);
+  static const Color backgroundLight = Colors.white; // Changed to pure white
   static const Color backgroundDark = Color(0xFF121212);
 
   // Surface Colors

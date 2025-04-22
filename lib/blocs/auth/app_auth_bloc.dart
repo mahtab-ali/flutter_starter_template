@@ -97,10 +97,17 @@ class AppAuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
 
     try {
-      await supabase.auth.resetPasswordForEmail(event.email);
-      emit(AuthUnauthenticated());
+      // Reset password using Supabase
+      await supabase.auth.resetPasswordForEmail(
+        event.email,
+        redirectTo: null, // You can add a redirect URL if needed
+      );
+
+      // If successful, emit success state with the email
+      emit(AuthPasswordResetSuccess(email: event.email));
     } catch (e) {
-      emit(AuthError(message: e.toString()));
+      // If there's an error, emit failure state with the error message
+      emit(AuthPasswordResetFailure(error: e.toString()));
     }
   }
 }
