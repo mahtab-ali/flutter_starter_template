@@ -1,9 +1,9 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
+
 import '../../themes/universal_constants.dart';
 
-/// Shows an iOS-style bottom sheet with blur effect on background
-Future<T?> showIosBottomSheet<T>({
+/// Shows an app-style bottom sheet with blur effect on background
+Future<T?> showAppBottomSheet<T>({
   required BuildContext context,
   required Widget child,
   bool isDismissible = true,
@@ -52,7 +52,7 @@ Future<T?> showIosBottomSheet<T>({
               BoxShadow(
                 blurRadius: 12,
                 spreadRadius: 2,
-                color: theme.colorScheme.onSurface.withAlpha(70),
+                color: theme.colorScheme.onSurface.withAlpha(20),
               ),
             ],
           ),
@@ -107,16 +107,16 @@ Gradient _createDarkerGradient({required bool isDark}) {
   }
 }
 
-/// A specialized widget to be used inside iOS bottom sheets
+/// A specialized widget to be used inside app bottom sheets
 /// that creates a visually pleasing layout
-class IosBottomSheetContent extends StatelessWidget {
+class AppBottomSheetContent extends StatelessWidget {
   final String? title;
   final Widget? icon;
   final Widget child;
   final List<Widget>? actions;
   final EdgeInsets contentPadding;
 
-  const IosBottomSheetContent({
+  const AppBottomSheetContent({
     super.key,
     this.title,
     this.icon,

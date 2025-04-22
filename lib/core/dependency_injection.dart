@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../blocs/auth/app_auth_bloc.dart';
 import '../blocs/auth/auth_event.dart';
 import '../blocs/localization/localization_bloc.dart';
+import '../blocs/onboarding/onboarding_bloc.dart';
 import '../blocs/theme/theme_bloc.dart';
 
 /// Dependency Injection class that centralizes all app dependencies
@@ -18,6 +19,7 @@ class DependencyInjection {
     return [
       BlocProvider<ThemeBloc>(create: (context) => ThemeBloc()),
       BlocProvider<LocalizationBloc>(create: (context) => LocalizationBloc()),
+      BlocProvider<OnboardingBloc>(create: (context) => OnboardingBloc()),
       BlocProvider<AppAuthBloc>(
         create:
             (context) =>
@@ -40,6 +42,8 @@ class DependencyInjection {
       return BlocProvider<T>(create: (context) => ThemeBloc() as T);
     } else if (T == LocalizationBloc) {
       return BlocProvider<T>(create: (context) => LocalizationBloc() as T);
+    } else if (T == OnboardingBloc) {
+      return BlocProvider<T>(create: (context) => OnboardingBloc() as T);
     }
 
     throw UnimplementedError('Provider for $T not implemented');

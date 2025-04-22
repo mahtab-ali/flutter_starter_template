@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import '../config/app_config.dart';
 
 class AppLocalizations {
@@ -17,6 +18,9 @@ class AppLocalizations {
   // Static class method that constructs a singleton delegate instance
   static const LocalizationsDelegate<AppLocalizations> delegate =
       _AppLocalizationsDelegate();
+
+  // Check if the current locale is RTL
+  bool get isRtl => Bidi.isRtlLanguage(locale.languageCode);
 
   Future<bool> load() async {
     // Load the language JSON file from the i18n folder

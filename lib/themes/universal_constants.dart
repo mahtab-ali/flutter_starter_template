@@ -18,6 +18,7 @@ class UniversalConstants {
   static const double borderRadiusLarge = 16.0;
   static const double borderRadiusXLarge = 24.0;
   static const double borderRadiusCircular = 100.0;
+  static const double borderRadiusFull = 100.0; // Added for fully rounded corners
 
   // Icon Sizes
   static const double iconSizeSmall = 16.0;
@@ -83,6 +84,7 @@ extension UniversalConstantsExtension on BuildContext {
   double get borderRadiusLarge => UniversalConstants.borderRadiusLarge;
   double get borderRadiusXLarge => UniversalConstants.borderRadiusXLarge;
   double get borderRadiusCircular => UniversalConstants.borderRadiusCircular;
+  double get borderRadiusFull => UniversalConstants.borderRadiusFull;
 
   // Padding
   EdgeInsets get paddingSmall => UniversalConstants.paddingSmall;

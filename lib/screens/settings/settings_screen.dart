@@ -11,8 +11,8 @@ import '../../config/app_config.dart';
 import '../../i18n/app_localizations.dart';
 import '../../themes/app_gradients.dart';
 import '../../themes/universal_constants.dart';
+import '../../ui/app_bar/custom_app_bar.dart';
 import '../../ui/cards/glass_card.dart';
-import '../../widgets/app_bar_actions.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -29,12 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(i18n.translate('settings')),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        actions: const [AppBarActions()],
-      ),
+      appBar: CustomAppBar(title: i18n.translate('settings')),
       extendBodyBehindAppBar: true,
       body: Container(
         decoration: BoxDecoration(
@@ -48,7 +43,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'App Preferences',
+                    i18n.translate('app_preferences'),
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: theme.colorScheme.onBackground,
@@ -69,7 +64,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 UniversalConstants.spacingMedium,
                               ),
                               child: Text(
-                                'Theme',
+                                i18n.translate('theme'),
                                 style: theme.textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -87,11 +82,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                         : null,
                               ),
                               title: Text(
-                                'System Theme',
+                                i18n.translate('system_theme'),
                                 style: theme.textTheme.bodyLarge,
                               ),
                               subtitle: Text(
-                                'Follow device settings',
+                                i18n.translate('follow_device_settings'),
                                 style: theme.textTheme.bodySmall,
                               ),
                               selected: themeState.isSystemTheme,
@@ -118,7 +113,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                         : null,
                               ),
                               title: Text(
-                                'Light Theme',
+                                i18n.translate('light_theme'),
                                 style: theme.textTheme.bodyLarge,
                               ),
                               onTap: () {
@@ -147,7 +142,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                         : null,
                               ),
                               title: Text(
-                                'Dark Theme',
+                                i18n.translate('dark_theme'),
                                 style: theme.textTheme.bodyLarge,
                               ),
                               onTap: () {
@@ -197,7 +192,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ),
                           ),
                           title: Text(
-                            'English',
+                            i18n.translate('english'),
                             style: theme.textTheme.bodyLarge,
                           ),
                           onTap: () {
@@ -222,7 +217,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ),
                           ),
                           title: Text(
-                            'العربية',
+                            i18n.translate('arabic'),
                             style: theme.textTheme.bodyLarge,
                           ),
                           onTap: () {
@@ -253,7 +248,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             UniversalConstants.spacingMedium,
                           ),
                           child: Text(
-                            'About',
+                            i18n.translate('about'),
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -267,7 +262,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             color: theme.iconTheme.color,
                           ),
                           title: Text(
-                            'App Version',
+                            i18n.translate('app_version'),
                             style: theme.textTheme.bodyLarge,
                           ),
                           subtitle: Text(
@@ -282,7 +277,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             color: theme.iconTheme.color,
                           ),
                           title: Text(
-                            'Privacy Policy',
+                            i18n.translate('privacy_policy'),
                             style: theme.textTheme.bodyLarge,
                           ),
                           trailing: Icon(
@@ -300,7 +295,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             color: theme.iconTheme.color,
                           ),
                           title: Text(
-                            'Terms of Service',
+                            i18n.translate('terms_of_service'),
                             style: theme.textTheme.bodyLarge,
                           ),
                           trailing: Icon(
@@ -329,7 +324,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         SizedBox(height: UniversalConstants.spacingSmall),
                         Text(
-                          'Version 1.0.0',
+                          i18n.translateWithArgs('version', {
+                            'version': '1.0.0',
+                          }),
                           style: TextStyle(
                             color: theme.colorScheme.onBackground.withOpacity(
                               0.7,

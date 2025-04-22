@@ -7,11 +7,11 @@ import '../../blocs/auth/auth_event.dart';
 import '../../blocs/auth/auth_state.dart';
 import '../../i18n/app_localizations.dart';
 import '../../themes/universal_constants.dart';
+import '../../ui/app_bar/custom_app_bar.dart';
 import '../../ui/buttons/primary_button.dart';
 import '../../ui/cards/glass_card.dart';
 import '../auth/login_screen.dart';
 import '../../utils/toast_util.dart';
-import '../../widgets/app_bar_actions.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -25,6 +25,7 @@ class HomeScreen extends StatelessWidget {
             : null;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final i18n = AppLocalizations.of(context);
 
     return BlocListener<AppAuthBloc, AuthState>(
       listener: (context, state) {
@@ -40,12 +41,7 @@ class HomeScreen extends StatelessWidget {
       },
       child: Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
-        appBar: AppBar(
-          title: Text(AppLocalizations.of(context).translate('home')),
-          actions: const [
-            AppBarActions(), // Using our AppBarActions widget for theme/language options
-          ],
-        ),
+        appBar: CustomAppBar(title: i18n.translate('home'), centerTitle: false),
         body: Container(
           width: double.infinity,
           padding: const EdgeInsets.all(UniversalConstants.spacingLarge),
@@ -68,10 +64,9 @@ class HomeScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: UniversalConstants.spacingMedium),
                       Text(
-                        AppLocalizations.of(context).translateWithArgs(
-                          'welcome_message',
-                          {'name': user?.email?.split('@').first ?? 'User'},
-                        ),
+                        i18n.translateWithArgs('welcome_message', {
+                          'name': user?.email?.split('@').first ?? 'User',
+                        }),
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -90,25 +85,22 @@ class HomeScreen extends StatelessWidget {
                     _buildInfoCard(
                       context,
                       icon: LineIcons.infoCircle,
-                      title: 'Flutter Starter Template',
-                      description:
-                          'A template with authentication, theme switching, and localization.',
+                      title: i18n.translate('flutter_starter_template'),
+                      description: i18n.translate('template_description'),
                     ),
                     const SizedBox(height: UniversalConstants.spacingMedium),
                     _buildInfoCard(
                       context,
                       icon: LineIcons.alternateShield,
-                      title: 'Authentication Ready',
-                      description:
-                          'Integrated with Supabase for secure user authentication.',
+                      title: i18n.translate('authentication_ready'),
+                      description: i18n.translate('auth_description'),
                     ),
                     const SizedBox(height: UniversalConstants.spacingMedium),
                     _buildInfoCard(
                       context,
                       icon: LineIcons.paintBrush,
-                      title: 'Beautiful UI Components',
-                      description:
-                          'Pre-styled components with frosted glass effects and gradients.',
+                      title: i18n.translate('beautiful_ui'),
+                      description: i18n.translate('ui_description'),
                     ),
                   ],
                 ),
@@ -116,7 +108,7 @@ class HomeScreen extends StatelessWidget {
 
               // Logout button at the bottom
               PrimaryButton(
-                text: AppLocalizations.of(context).translate('logout'),
+                text: i18n.translate('logout'),
                 onPressed: () {
                   context.read<AppAuthBloc>().add(AuthLogoutRequested());
                 },

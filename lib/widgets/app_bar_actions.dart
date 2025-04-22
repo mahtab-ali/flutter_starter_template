@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:starter_template_flutter/ui/bottom_sheets/app_bottom_sheet.dart';
 
 import '../blocs/localization/localization_bloc.dart';
 import '../blocs/localization/localization_event.dart';
@@ -8,42 +9,78 @@ import '../blocs/theme/theme_bloc.dart';
 import '../blocs/theme/theme_event.dart';
 import '../blocs/theme/theme_state.dart';
 import '../i18n/app_localizations.dart';
-import '../ui/bottom_sheets/ios_bottom_sheet.dart';
 
 class AppBarActions extends StatelessWidget {
-  const AppBarActions({super.key});
+  final bool showThemeToggle;
+  final bool showLanguageSelector;
+  final bool groupActions;
+
+  const AppBarActions({
+    super.key,
+    this.showThemeToggle = true,
+    this.showLanguageSelector = true,
+    this.groupActions = true,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        // Language selector icon
-        IconButton(
-          icon: const Icon(LineIcons.language),
-          onPressed: () => _showLanguageBottomSheet(context),
-          tooltip: AppLocalizations.of(context).translate('language'),
-        ),
-        // Theme selector icon - shows sun/moon based on current theme
-        BlocBuilder<ThemeBloc, ThemeState>(
-          builder: (context, state) {
-            final bool isDarkMode;
-            if (state.isSystemTheme) {
-              // If system theme, check the current brightness
-              final brightness = MediaQuery.platformBrightnessOf(context);
-              isDarkMode = brightness == Brightness.dark;
-            } else {
-              // Otherwise use the selected theme
-              isDarkMode = state.isDarkMode == true;
-            }
+    if (groupActions) {
+      return Row(
+        children: [
+          if (showLanguageSelector) _buildLanguageButton(context),
+          if (showThemeToggle) _buildThemeToggleButton(context),
+        ],
+      );
+    } else {
+      return showThemeToggle
+          ? _buildThemeToggleButton(context)
+          : _buildLanguageButton(context);
+    }
+  }
 
-            return IconButton(
-              icon: Icon(isDarkMode ? LineIcons.moon : LineIcons.sun),
-              onPressed: () => _showThemeBottomSheet(context),
-              tooltip: AppLocalizations.of(context).translate('theme'),
-            );
+  Widget _buildLanguageButton(BuildContext context) {
+    return IconButton(
+      icon: const Icon(LineIcons.language),
+      onPressed: () => _showLanguageBottomSheet(context),
+      tooltip: AppLocalizations.of(context).translate('language'),
+    );
+  }
+
+  Widget _buildThemeToggleButton(BuildContext context) {
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, state) {
+        final bool isDarkMode;
+        if (state.isSystemTheme) {
+          // If system theme, check the current brightness
+          final brightness = MediaQuery.platformBrightnessOf(context);
+          isDarkMode = brightness == Brightness.dark;
+        } else {
+          // Otherwise use the selected theme
+          isDarkMode = state.isDarkMode == true;
+        }
+
+        return IconButton(
+          icon: Icon(isDarkMode ? LineIcons.sun : LineIcons.moon),
+          onPressed: () {
+            // Toggle between light and dark mode directly
+            if (state.isSystemTheme) {
+              // If system theme is on, switch to explicit light or dark based on current state
+              context.read<ThemeBloc>().add(
+                ThemeChanged(isDarkMode: !isDarkMode),
+              );
+            } else {
+              // If already in explicit mode, just toggle
+              context.read<ThemeBloc>().add(
+                ThemeChanged(isDarkMode: !state.isDarkMode!),
+              );
+            }
           },
-        ),
-      ],
+          tooltip:
+              isDarkMode
+                  ? AppLocalizations.of(context).translate('light_mode')
+                  : AppLocalizations.of(context).translate('dark_mode'),
+        );
+      },
     );
   }
 
@@ -51,9 +88,9 @@ class AppBarActions extends StatelessWidget {
     final theme = Theme.of(context);
     final i18n = AppLocalizations.of(context);
 
-    showIosBottomSheet(
+    showAppBottomSheet(
       context: context,
-      child: IosBottomSheetContent(
+      child: AppBottomSheetContent(
         title: i18n.translate('select_language'),
         icon: Icon(LineIcons.language, color: theme.iconTheme.color),
         child: Column(
@@ -61,7 +98,10 @@ class AppBarActions extends StatelessWidget {
           children: [
             // English option
             ListTile(
-              leading: const Text('🇺🇸'),
+              leading: const Text(
+                '🇺🇸',
+                style: TextStyle(fontSize: 32), // Increased size from default
+              ),
               title: Text(
                 i18n.translate('english'),
                 style: theme.textTheme.bodyLarge,
@@ -79,7 +119,10 @@ class AppBarActions extends StatelessWidget {
             ),
             // Arabic option
             ListTile(
-              leading: const Text('🇸🇦'),
+              leading: const Text(
+                '🇸🇦',
+                style: TextStyle(fontSize: 32), // Increased size from default
+              ),
               title: Text(
                 i18n.translate('arabic'),
                 style: theme.textTheme.bodyLarge,
@@ -96,96 +139,6 @@ class AppBarActions extends StatelessWidget {
               },
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  void _showThemeBottomSheet(BuildContext context) {
-    final theme = Theme.of(context);
-    final i18n = AppLocalizations.of(context);
-
-    showIosBottomSheet(
-      context: context,
-      child: IosBottomSheetContent(
-        title: i18n.translate('theme'),
-        child: BlocBuilder<ThemeBloc, ThemeState>(
-          builder: (context, state) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // System theme option
-                ListTile(
-                  leading: Icon(
-                    LineIcons.desktop,
-                    color:
-                        state.isSystemTheme ? theme.colorScheme.primary : null,
-                  ),
-                  title: Text("System Theme", style: theme.textTheme.bodyLarge),
-
-                  trailing:
-                      state.isSystemTheme
-                          ? Icon(
-                            LineIcons.check,
-                            color: theme.colorScheme.primary,
-                          )
-                          : null,
-                  onTap: () {
-                    context.read<ThemeBloc>().add(UseSystemTheme());
-                    Navigator.pop(context);
-                  },
-                ),
-                // Light theme option
-                ListTile(
-                  leading: Icon(
-                    LineIcons.sun,
-                    color:
-                        !state.isSystemTheme && state.isDarkMode == false
-                            ? theme.colorScheme.primary
-                            : null,
-                  ),
-                  title: Text("Light Mode", style: theme.textTheme.bodyLarge),
-                  trailing:
-                      !state.isSystemTheme && state.isDarkMode == false
-                          ? Icon(
-                            LineIcons.check,
-                            color: theme.colorScheme.primary,
-                          )
-                          : null,
-                  onTap: () {
-                    context.read<ThemeBloc>().add(
-                      ThemeChanged(isDarkMode: false),
-                    );
-                    Navigator.pop(context);
-                  },
-                ),
-                // Dark theme option
-                ListTile(
-                  leading: Icon(
-                    LineIcons.moon,
-                    color:
-                        !state.isSystemTheme && state.isDarkMode == true
-                            ? theme.colorScheme.primary
-                            : null,
-                  ),
-                  title: Text("Dark Mode", style: theme.textTheme.bodyLarge),
-                  trailing:
-                      !state.isSystemTheme && state.isDarkMode == true
-                          ? Icon(
-                            LineIcons.check,
-                            color: theme.colorScheme.primary,
-                          )
-                          : null,
-                  onTap: () {
-                    context.read<ThemeBloc>().add(
-                      ThemeChanged(isDarkMode: true),
-                    );
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            );
-          },
         ),
       ),
     );

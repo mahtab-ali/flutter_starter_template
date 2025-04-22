@@ -27,6 +27,19 @@ class Validators {
     return null;
   }
 
+  /// Validates name field
+  static String? validateName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your full name';
+    }
+
+    if (value.trim().length < 2) {
+      return 'Name must be at least 2 characters';
+    }
+
+    return null;
+  }
+
   /// Validates that passwords match
   static String? validatePasswordMatch(
     String? password,
