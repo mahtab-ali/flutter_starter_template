@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:line_icons/line_icons.dart';
 
 import '../../blocs/auth/app_auth_bloc.dart';
-import '../../blocs/auth/auth_event.dart';
-import '../../blocs/auth/auth_state.dart';
+import '../../blocs/auth/app_auth_event.dart';
+import '../../blocs/auth/app_auth_state.dart';
 import '../../config/routes.dart';
 import '../../i18n/app_localizations.dart';
 import '../../themes/app_gradients.dart';
@@ -12,6 +12,7 @@ import '../../themes/app_text_styles.dart';
 import '../../themes/universal_constants.dart';
 import '../../ui/app_bar/custom_app_bar.dart';
 import '../../ui/buttons/gradient_button.dart';
+import '../../ui/cards/app_card.dart';
 import '../../ui/inputs/custom_text_field.dart';
 import '../../utils/keyboard_util.dart';
 import '../../utils/toast_util.dart';
@@ -78,7 +79,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final i18n = AppLocalizations.of(context);
     final locale = i18n.locale;
 
-    return BlocConsumer<AppAuthBloc, AuthState>(
+    return BlocConsumer<AppAuthBloc, AppAuthState>(
       listener: (context, state) {
         if (state is AuthError) {
           ToastUtil.showError(context, state.message);
@@ -129,26 +130,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
 
                           // Form container with theme-aware background
-                          Container(
+                          AppCard(
+                            elevation: 4.0,
                             padding: const EdgeInsets.all(
                               UniversalConstants.spacingLarge,
-                            ),
-                            decoration: BoxDecoration(
-                              color: theme.cardColor,
-                              borderRadius: BorderRadius.circular(
-                                UniversalConstants.borderRadiusLarge,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: theme.shadowColor.withAlpha(25),
-                                  blurRadius: 10,
-                                  spreadRadius: 1,
-                                ),
-                              ],
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                // Helper Text
+                                Text(
+                                  i18n.translate('register_helper_text'),
+                                  style:
+                                      isDark
+                                          ? AppTextStyles.bodyMediumDark(
+                                            locale: locale,
+                                          )
+                                          : AppTextStyles.bodyMediumLight(
+                                            locale: locale,
+                                          ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(
+                                  height: UniversalConstants.spacingLarge,
+                                ),
+
                                 // Full Name Field
                                 CustomTextField(
                                   label: i18n.translate('full_name'),
@@ -199,7 +205,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   height: UniversalConstants.spacingMedium,
                                 ),
 
-                                // Password Field
+                                // Password Field with toggle
                                 CustomTextField(
                                   label: i18n.translate('password'),
                                   hint: i18n.translate('password_hint'),
@@ -208,6 +214,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   textInputAction: TextInputAction.done,
                                   onFieldSubmitted: (_) => _register(),
                                   obscureText: true,
+                                  showObscureTextToggle: true,
                                   prefixIcon: Icon(
                                     LineIcons.lock,
                                     color: theme.iconTheme.color,

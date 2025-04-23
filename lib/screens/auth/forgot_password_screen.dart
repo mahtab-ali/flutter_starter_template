@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:line_icons/line_icons.dart';
-
 import '../../blocs/auth/app_auth_bloc.dart';
-import '../../blocs/auth/auth_event.dart';
-import '../../blocs/auth/auth_state.dart';
-import '../../config/routes.dart';
+import '../../blocs/auth/app_auth_event.dart';
+import '../../blocs/auth/app_auth_state.dart';
 import '../../i18n/app_localizations.dart';
 import '../../themes/app_gradients.dart';
 import '../../themes/app_text_styles.dart';
 import '../../themes/universal_constants.dart';
 import '../../ui/app_bar/custom_app_bar.dart';
 import '../../ui/buttons/gradient_button.dart';
+import '../../ui/cards/app_card.dart';
 import '../../ui/inputs/custom_text_field.dart';
 import '../../utils/keyboard_util.dart';
 import '../../utils/toast_util.dart';
@@ -55,14 +54,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     final i18n = AppLocalizations.of(context);
     final locale = i18n.locale;
 
-    return BlocConsumer<AppAuthBloc, AuthState>(
+    return BlocConsumer<AppAuthBloc, AppAuthState>(
       listener: (context, state) {
         if (state is AuthPasswordResetFailure) {
           ToastUtil.showError(context, state.error);
         } else if (state is AuthPasswordResetSuccess) {
           ToastUtil.showSuccess(
             context,
-            i18n.translate('reset_password_success_title'),
+            i18n.translate("reset_password_success_title"),
           );
         }
       },
@@ -76,7 +75,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           child: Scaffold(
             backgroundColor: theme.scaffoldBackgroundColor,
             appBar: CustomAppBar(
-              title: i18n.translate('forgot_password'),
+              title: i18n.translate("forgot_password"),
               centerTitle: false,
             ),
             body: SafeArea(
@@ -104,38 +103,27 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             height: UniversalConstants.spacingXLarge,
                           ),
 
-                          // Form container with theme-aware background
-                          Container(
+                          // Replace Container with AppCard
+                          AppCard(
+                            elevation: 4.0,
                             padding: const EdgeInsets.all(
                               UniversalConstants.spacingLarge,
-                            ),
-                            decoration: BoxDecoration(
-                              color: theme.cardColor,
-                              borderRadius: BorderRadius.circular(
-                                UniversalConstants.borderRadiusLarge,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: theme.shadowColor.withAlpha(25),
-                                  blurRadius: 10,
-                                  spreadRadius: 1,
-                                ),
-                              ],
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 if (!resetSent) ...[
+                                  // Helper Text for Forgot Password
                                   Text(
                                     i18n.translate(
-                                      'reset_password_instruction',
+                                      "reset_password_instruction",
                                     ),
                                     style:
                                         isDark
-                                            ? AppTextStyles.bodyLargeDark(
+                                            ? AppTextStyles.bodyMediumDark(
                                               locale: locale,
                                             )
-                                            : AppTextStyles.bodyLargeLight(
+                                            : AppTextStyles.bodyMediumLight(
                                               locale: locale,
                                             ),
                                     textAlign: TextAlign.center,
@@ -146,8 +134,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                                   // Email Field
                                   CustomTextField(
-                                    label: i18n.translate('email'),
-                                    hint: i18n.translate('email_hint'),
+                                    label: i18n.translate("email"),
+                                    hint: i18n.translate("email_hint"),
                                     controller: _emailController,
                                     focusNode: _emailFocusNode,
                                     keyboardType: TextInputType.emailAddress,
@@ -160,6 +148,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                     validator:
                                         (value) =>
                                             Validators.validateEmail(value),
+                                    borderColor:
+                                        isDark
+                                            ? Colors.white.withAlpha(25)
+                                            : Colors.black.withAlpha(25),
                                   ),
                                   const SizedBox(
                                     height: UniversalConstants.spacingLarge,
@@ -167,7 +159,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                                   // Reset Password Button
                                   GradientButton(
-                                    text: i18n.translate('reset_password'),
+                                    text: i18n.translate("reset_password"),
                                     isLoading: isLoading,
                                     onPressed: _resetPassword,
                                     gradient: AppGradients.primaryDiagonal(
@@ -180,16 +172,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                     child: Icon(
                                       LineIcons.checkCircle,
                                       color: theme.colorScheme.primary,
-                                      size: 50,
+                                      size: 60,
                                     ),
                                   ),
                                   const SizedBox(
-                                    height: UniversalConstants.spacingMedium,
+                                    height: UniversalConstants.spacingLarge,
                                   ),
                                   Center(
                                     child: Text(
                                       i18n.translate(
-                                        'reset_password_success_title',
+                                        "reset_password_success_title",
                                       ),
                                       style:
                                           isDark
@@ -214,8 +206,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                   ),
                                   Text(
                                     i18n.translateWithArgs(
-                                      'reset_password_success_message',
-                                      {'email': state.email},
+                                      "reset_password_success_message",
+                                      {"email": state.email},
                                     ),
                                     style:
                                         isDark
@@ -225,6 +217,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                             : AppTextStyles.bodyMediumLight(
                                               locale: locale,
                                             ),
+                                    textAlign: TextAlign.center,
                                   ),
                                   const SizedBox(
                                     height: UniversalConstants.spacingLarge,
@@ -232,12 +225,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                                   // Back to Login Button
                                   GradientButton(
-                                    text: i18n.translate('back_to_login'),
-                                    onPressed:
-                                        () => AppRoutes.navigateAndReplace(
-                                          context,
-                                          AppRoutes.login,
-                                        ),
+                                    text: i18n.translate("back_to_login"),
+                                    onPressed: () => Navigator.pop(context),
                                     gradient: AppGradients.primaryDiagonal(
                                       isDark: isDark,
                                     ),
@@ -255,16 +244,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             Center(
                               child: TextButton(
                                 onPressed: () {
-                                  AppRoutes.navigateAndReplace(
-                                    context,
-                                    AppRoutes.login,
-                                  );
+                                  Navigator.pop(context);
                                 },
                                 style: TextButton.styleFrom(
                                   foregroundColor: theme.colorScheme.primary,
                                 ),
                                 child: Text(
-                                  i18n.translate('back_to_login'),
+                                  i18n.translate("back_to_login"),
                                   style:
                                       isDark
                                           ? AppTextStyles.bodyMediumDark(

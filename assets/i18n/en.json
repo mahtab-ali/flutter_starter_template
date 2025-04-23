@@ -34,6 +34,8 @@
   "password_hint": "••••••••",  
   "already_have_account": "Already have an account?",
   "dont_have_account": "Don't have an account?",
+  "login_helper_text": "Sign in with your email and password to access your account",
+  "register_helper_text": "Fill the form below to create your new account",
   "reset_password_instruction": "Please enter your email address to reset your password!",
   "reset_password_success_title": "Password reset link sent!",
   "reset_password_success_message": "We have sent a password reset link to {email}. Please check your email and follow the instructions to reset your password.",

@@ -3,9 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:line_icons/line_icons.dart';
 
 import '../../blocs/auth/app_auth_bloc.dart';
-import '../../blocs/auth/auth_state.dart';
+import '../../blocs/auth/app_auth_state.dart';
 import '../../config/routes.dart';
 import '../../i18n/app_localizations.dart';
+import '../../models/user_model.dart';
 import '../../themes/app_text_styles.dart';
 import '../../ui/app_bar/custom_app_bar.dart';
 import '../../utils/toast_util.dart';
@@ -18,6 +19,29 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  UserModel? _userModel;
+  String _displayName = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  void _loadUserData() {
+    final authBloc = context.read<AppAuthBloc>();
+    final state = authBloc.state;
+    if (state is AuthAuthenticated) {
+      setState(() {
+        _userModel = UserModel.fromSupabaseUser(state.user);
+        _displayName =
+            _userModel?.displayName ??
+            _userModel?.email.split('@').first ??
+            'User';
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -25,10 +49,12 @@ class _HomeScreenState extends State<HomeScreen> {
     final locale = i18n.locale;
     final isDark = theme.brightness == Brightness.dark;
 
-    return BlocListener<AppAuthBloc, AuthState>(
+    return BlocListener<AppAuthBloc, AppAuthState>(
       listener: (context, state) {
         // Listen for authentication state changes
-        if (state is AuthUnauthenticated) {
+        if (state is AuthAuthenticated) {
+          _loadUserData();
+        } else if (state is AuthUnauthenticated) {
           // Navigate to login screen when the user logs out
           AppRoutes.navigateAndRemoveUntil(context, AppRoutes.login);
         } else if (state is AuthError) {
@@ -42,6 +68,11 @@ class _HomeScreenState extends State<HomeScreen> {
           centerTitle: false,
           automaticallyImplyLeading: false,
           actions: [
+            IconButton(
+              icon: const Icon(LineIcons.user),
+              onPressed: () => AppRoutes.navigateTo(context, AppRoutes.profile),
+              tooltip: i18n.translate('profile'),
+            ),
             IconButton(
               icon: const Icon(LineIcons.cog),
               onPressed:
@@ -65,7 +96,9 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                i18n.translate('welcome_message').replaceAll('{name}', 'User'),
+                i18n
+                    .translate('welcome_message')
+                    .replaceAll('{name}', _displayName),
                 style:
                     isDark
                         ? AppTextStyles.bodyLargeDark(locale: locale)

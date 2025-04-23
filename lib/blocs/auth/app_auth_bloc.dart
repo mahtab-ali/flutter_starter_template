@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase_pkg;
-import 'auth_event.dart';
-import 'auth_state.dart';
+import 'app_auth_event.dart';
+import 'app_auth_state.dart';
 
-class AppAuthBloc extends Bloc<AuthEvent, AuthState> {
+class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
   final supabase_pkg.SupabaseClient supabase;
 
   AppAuthBloc({required this.supabase}) : super(AuthInitial()) {
@@ -16,7 +16,7 @@ class AppAuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _onAuthCheckRequested(
     AuthCheckRequested event,
-    Emitter<AuthState> emit,
+    Emitter<AppAuthState> emit,
   ) async {
     emit(AuthLoading());
 
@@ -34,7 +34,7 @@ class AppAuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _onAuthLoginRequested(
     AuthLoginRequested event,
-    Emitter<AuthState> emit,
+    Emitter<AppAuthState> emit,
   ) async {
     emit(AuthLoading());
 
@@ -56,7 +56,7 @@ class AppAuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _onAuthRegisterRequested(
     AuthRegisterRequested event,
-    Emitter<AuthState> emit,
+    Emitter<AppAuthState> emit,
   ) async {
     emit(AuthLoading());
 
@@ -64,6 +64,7 @@ class AppAuthBloc extends Bloc<AuthEvent, AuthState> {
       final response = await supabase.auth.signUp(
         email: event.email,
         password: event.password,
+        data: {'name': event.name},
       );
 
       if (response.user != null) {
@@ -78,7 +79,7 @@ class AppAuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _onAuthLogoutRequested(
     AuthLogoutRequested event,
-    Emitter<AuthState> emit,
+    Emitter<AppAuthState> emit,
   ) async {
     emit(AuthLoading());
 
@@ -92,7 +93,7 @@ class AppAuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _onAuthResetPasswordRequested(
     AuthResetPasswordRequested event,
-    Emitter<AuthState> emit,
+    Emitter<AppAuthState> emit,
   ) async {
     emit(AuthLoading());
 
