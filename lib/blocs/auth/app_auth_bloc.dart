@@ -12,6 +12,7 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
     on<AuthRegisterRequested>(_onAuthRegisterRequested);
     on<AuthLogoutRequested>(_onAuthLogoutRequested);
     on<AuthResetPasswordRequested>(_onAuthResetPasswordRequested);
+    on<UpdateUserDataRequested>(_onUpdateUserDataRequested);
   }
 
   void _onAuthCheckRequested(
@@ -64,7 +65,12 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
       final response = await supabase.auth.signUp(
         email: event.email,
         password: event.password,
-        data: {'name': event.name},
+        data: {
+          'name': event.name,
+          'email': event.email,
+          'email_verified': true,
+          'phone_verified': false,
+        },
       );
 
       if (response.user != null) {
@@ -109,6 +115,49 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
     } catch (e) {
       // If there's an error, emit failure state with the error message
       emit(AuthPasswordResetFailure(error: e.toString()));
+    }
+  }
+
+  void _onUpdateUserDataRequested(
+    UpdateUserDataRequested event,
+    Emitter<AppAuthState> emit,
+  ) async {
+    // First get current state to avoid disrupting authentication
+    final currentState = state;
+    if (currentState is! AuthAuthenticated) {
+      emit(
+        AuthError(message: 'Cannot update user data while not authenticated'),
+      );
+      return;
+    }
+
+    // Emit loading without changing authentication state
+    emit(AuthLoading());
+
+    try {
+      // Update the user metadata
+      final userAttributes = supabase_pkg.UserAttributes();
+
+      // Only update fields that were provided
+      if (event.displayName != null) {
+        userAttributes.data = {'name': event.displayName};
+      }
+
+      // Update the user
+      final response = await supabase.auth.updateUser(userAttributes);
+
+      if (response.user != null) {
+        // Emit success with the updated user
+        emit(AuthAuthenticated(user: response.user!));
+      } else {
+        // Restore previous state if update failed
+        emit(currentState);
+        emit(AuthError(message: 'Failed to update user data'));
+      }
+    } catch (e) {
+      // Restore previous state and emit error
+      emit(currentState);
+      emit(AuthError(message: e.toString()));
     }
   }
 }

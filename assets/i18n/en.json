@@ -75,5 +75,25 @@
   "logout_confirmation": "Logout Confirmation",
   "logout_confirmation_message": "Are you sure you want to logout?",
   "logged_out_successfully": "You have been successfully logged out",
-  "account": "Account"
+  "account": "Account",
+  
+  "account_info": "Account Information",
+  "personal_info": "Personal Information",
+  "security": "Security",
+  "change_password": "Change Password",
+  "permissions": "Permissions",
+  "permissions_info": "App Permissions",
+  "permissions_description": "This app requires minimal permissions to function. We only access data that is necessary for core features.",
+  "edit_profile": "Edit Profile",
+  "save": "Save",
+  "update": "Update",
+  "save_changes": "Save Changes",
+  "current_password": "Current Password",
+  "new_password": "New Password",
+  "account_created": "Account Created",
+  "last_login": "Last Login",
+  "not_set": "Not set",
+  "anonymous": "Anonymous",
+  "update_password": "Update Password",
+  "ok": "OK"
 }

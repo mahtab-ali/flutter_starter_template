@@ -28,3 +28,9 @@ class AuthResetPasswordRequested extends AppAuthEvent {
 
   AuthResetPasswordRequested({required this.email});
 }
+
+class UpdateUserDataRequested extends AppAuthEvent {
+  final String? displayName;
+
+  UpdateUserDataRequested({this.displayName});
+}

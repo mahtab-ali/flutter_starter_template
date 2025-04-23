@@ -75,5 +75,25 @@
   "logout_confirmation": "تأكيد تسجيل الخروج",
   "logout_confirmation_message": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
   "logged_out_successfully": "تم تسجيل الخروج بنجاح",
-  "account": "الحساب"
+  "account": "الحساب",
+  
+  "account_info": "معلومات الحساب",
+  "personal_info": "المعلومات الشخصية",
+  "security": "الأمان",
+  "change_password": "تغيير كلمة المرور",
+  "permissions": "الأذونات",
+  "permissions_info": "أذونات التطبيق",
+  "permissions_description": "يتطلب هذا التطبيق الحد الأدنى من الأذونات للعمل. نحن نصل فقط إلى البيانات الضرورية للميزات الأساسية.",
+  "edit_profile": "تعديل الملف الشخصي",
+  "save": "حفظ",
+  "update": "تحديث",
+  "save_changes": "حفظ التغييرات",
+  "current_password": "كلمة المرور الحالية",
+  "new_password": "كلمة المرور الجديدة",
+  "account_created": "تاريخ إنشاء الحساب",
+  "last_login": "آخر تسجيل دخول",
+  "not_set": "غير محدد",
+  "anonymous": "مجهول",
+  "update_password": "تحديث كلمة المرور",
+  "ok": "موافق"
 }

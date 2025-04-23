@@ -53,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
       listener: (context, state) {
         // Listen for authentication state changes
         if (state is AuthAuthenticated) {
-          _loadUserData();
+          _loadUserData(); // Reload user data whenever auth state changes
         } else if (state is AuthUnauthenticated) {
           // Navigate to login screen when the user logs out
           AppRoutes.navigateAndRemoveUntil(context, AppRoutes.login);
