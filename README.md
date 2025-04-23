@@ -14,6 +14,9 @@ A comprehensive Flutter starter template with authentication, localization, them
 - 🔄 **RTL Support** - Automatic right-to-left layout for Arabic
 - 🎭 **Smart Icon Direction** - Icons automatically flip in RTL mode
 - 🔤 **Dynamic Typography** - Font family changes based on language
+- 👤 **Profile Management** - Comprehensive user profile with editing capabilities
+- 🔒 **Security Features** - Password change functionality and secure data handling
+- 🛠️ **Error Handling** - Toast notifications and form validations
 
 ## 📋 Prerequisites
 
@@ -74,6 +77,7 @@ lib/
 │   ├── auth/              # Authentication screens
 │   ├── home/              # Home screens
 │   ├── onboarding/        # Onboarding screens
+│   ├── profile/           # User profile screen
 │   ├── settings/          # Settings screen
 │   └── splash/            # Splash screen
 ├── services/              # Services and API clients
@@ -200,6 +204,15 @@ CustomAlertDialog.showConfirmation(
   onConfirm: () {
     // Action on confirmation
   },
+);
+
+// Custom form dialog
+CustomAlertDialog.showCustomForm(
+  context,
+  title: 'Edit Profile',
+  formContent: YourFormWidget(),
+  actions: [YourActions],
+  customIcon: Icon(LineIcons.userEdit, size: 60.0),
 );
 ```
 
@@ -336,6 +349,62 @@ The template automatically handles right-to-left layouts for Arabic language:
 2. Icons are flipped appropriately using the Helper.getDirectionalIcon utility
 3. Font families switch based on language
 
+## 👤 Profile Management
+
+The template includes a comprehensive user profile management system with the following features:
+
+### Profile Screen
+
+A beautifully designed profile screen with:
+
+- **Profile Picture** - Auto-generated avatar based on user initials 
+- **Account Information** - Display of account creation date and last login
+- **Personal Information** - User's full name with edit functionality
+- **Security Settings** - Password management and permissions info
+
+### Profile Editing
+
+Users can edit their profile information:
+
+```dart
+// Access the profile screen
+Navigator.of(context).pushNamed('/profile');
+
+// Edit profile dialog
+CustomAlertDialog.showCustomForm(
+  context,
+  title: i18n.translate('edit_profile'),
+  formContent: yourFormWidget,
+  actions: yourActions,
+);
+```
+
+### Password Management
+
+Secure password changing functionality:
+
+- Current password validation
+- New password requirements check
+- Confirmation password matching
+- Success/error feedback via toast notifications
+
+### User Data Model
+
+The UserModel class provides a structured way to handle user data:
+
+```dart
+final user = UserModel(
+  id: 'user-id',
+  email: 'user@example.com',
+  displayName: 'User Name',
+  lastLogin: DateTime.now(),
+  createdAt: DateTime.now(),
+);
+
+// Convert from Supabase User
+final userFromSupabase = UserModel.fromSupabaseUser(supabaseUser);
+```
+
 ## 🧠 BLoC Architecture
 
 ### Working with BLoC Components
@@ -375,6 +444,49 @@ The template includes a complete authentication flow with Supabase:
 - Password reset flow
 - Session persistence
 - Secure profile management
+
+## 🛠️ Error Handling System
+
+The template includes a robust error handling system:
+
+### Toast Notifications
+
+Consistent user feedback through toast messages:
+
+```dart
+// Success toast
+ToastUtil.showSuccess(context, 'Operation successful');
+
+// Error toast
+ToastUtil.showError(context, 'An error occurred');
+
+// Info toast
+ToastUtil.showInfo(context, 'Information message');
+```
+
+### Form Validation
+
+Built-in form validation with:
+
+- Required field validation
+- Email format validation
+- Password strength validation
+- Password matching validation
+
+### BLoC Error Handling
+
+Centralized error handling through the BLoC pattern:
+
+```dart
+BlocListener<AppAuthBloc, AppAuthState>(
+  listener: (context, state) {
+    if (state is AuthError) {
+      ToastUtil.showError(context, state.message);
+    }
+  },
+  child: YourWidget(),
+)
+```
 
 ## 🛠️ Customization
 
