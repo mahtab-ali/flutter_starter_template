@@ -44,7 +44,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Text(title),
       centerTitle: centerTitle,
       elevation: elevation ? 4.0 : 0.0,
-      backgroundColor: backgroundColor ?? theme.appBarTheme.backgroundColor,
+      backgroundColor: backgroundColor ?? theme.colorScheme.surface,
       scrolledUnderElevation: 0,
       // If we have a custom leading widget, use it
       leading:

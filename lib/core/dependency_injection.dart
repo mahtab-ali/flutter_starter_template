@@ -3,7 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../blocs/app/app_bloc.dart';
 import '../blocs/auth/app_auth_bloc.dart';
-import '../blocs/auth/auth_event.dart';
+import '../blocs/auth/app_auth_event.dart';
 import '../blocs/localization/localization_bloc.dart';
 import '../blocs/onboarding/onboarding_bloc.dart';
 import '../blocs/theme/theme_bloc.dart';
@@ -23,10 +23,9 @@ class DependencyInjection {
       BlocProvider<LocalizationBloc>(create: (context) => LocalizationBloc()),
       BlocProvider<OnboardingBloc>(create: (context) => OnboardingBloc()),
       BlocProvider<AppAuthBloc>(
-        create:
-            (context) =>
-                AppAuthBloc(supabase: supabaseClient)
-                  ..add(AuthCheckRequested()),
+        create: (context) =>
+            AppAuthBloc(supabase: supabaseClient)
+              ..add(AuthCheckRequested()),
       ),
     ];
   }

@@ -1,134 +1,154 @@
 import 'package:flutter/material.dart';
-import '../../themes/app_colors.dart';
+import 'package:line_icons/line_icons.dart';
 import '../../themes/universal_constants.dart';
 
-class CustomTextField extends StatelessWidget {
+class CustomTextField extends StatefulWidget {
   final String label;
   final String hint;
   final TextEditingController controller;
-  final TextInputType keyboardType;
+  final FocusNode? focusNode;
+  final TextInputAction? textInputAction;
+  final TextInputType? keyboardType;
   final bool obscureText;
-  final String? Function(String?)? validator;
+  final bool showObscureTextToggle;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
-  final VoidCallback? onTap;
-  final Function(String)? onChanged;
+  final String? Function(String?)? validator;
   final Function(String)? onFieldSubmitted;
-  final FocusNode? focusNode;
+  final Function(String)? onChanged;
+  final int maxLines;
+  final int? maxLength;
   final bool enabled;
-  final int? maxLines;
-  final TextInputAction? textInputAction;
+  final Color? borderColor;
 
   const CustomTextField({
     super.key,
     required this.label,
-    this.hint = '',
+    required this.hint,
     required this.controller,
-    this.keyboardType = TextInputType.text,
+    this.focusNode,
+    this.textInputAction,
+    this.keyboardType,
     this.obscureText = false,
-    this.validator,
+    this.showObscureTextToggle = false,
     this.prefixIcon,
     this.suffixIcon,
-    this.onTap,
-    this.onChanged,
+    this.validator,
     this.onFieldSubmitted,
-    this.focusNode,
-    this.enabled = true,
+    this.onChanged,
     this.maxLines = 1,
-    this.textInputAction,
+    this.maxLength,
+    this.enabled = true,
+    this.borderColor,
   });
+
+  @override
+  State<CustomTextField> createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<CustomTextField> {
+  late bool _obscureText;
+
+  @override
+  void initState() {
+    super.initState();
+    _obscureText = widget.obscureText;
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color:
-                isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-          ),
+    // Use the provided border color or calculate a default one that matches the card border
+    final borderColor =
+        widget.borderColor ??
+        (isDark ? Colors.white.withAlpha(25) : Colors.black.withAlpha(25));
+
+    return TextFormField(
+      controller: widget.controller,
+      focusNode: widget.focusNode,
+      textInputAction: widget.textInputAction,
+      keyboardType: widget.keyboardType,
+      obscureText: _obscureText,
+      validator: widget.validator,
+      onFieldSubmitted: widget.onFieldSubmitted,
+      onChanged: widget.onChanged,
+      maxLines: widget.maxLines,
+      maxLength: widget.maxLength,
+      enabled: widget.enabled,
+      decoration: InputDecoration(
+        labelText: widget.label,
+        hintText: widget.hint,
+        prefixIcon:
+            widget.prefixIcon != null
+                ? Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: UniversalConstants.spacingMedium,
+                    vertical: UniversalConstants.spacingSmall,
+                  ),
+                  child: widget.prefixIcon,
+                )
+                : null,
+        prefixIconConstraints: const BoxConstraints(
+          minWidth: 56,
+          minHeight: 56,
         ),
-        const SizedBox(height: UniversalConstants.spacingSmall),
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          obscureText: obscureText,
-          validator: validator,
-          onTap: onTap,
-          onChanged: onChanged,
-          onFieldSubmitted: onFieldSubmitted,
-          focusNode: focusNode,
-          enabled: enabled,
-          maxLines: maxLines,
-          textInputAction: textInputAction,
-          decoration: InputDecoration(
-            hintText: hint,
-            prefixIcon: prefixIcon,
-            suffixIcon: suffixIcon,
-            filled: true,
-            fillColor: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
-            hintStyle: TextStyle(
-              color:
-                  isDark
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondaryLight,
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: UniversalConstants.spacingMedium,
-              vertical: UniversalConstants.spacingSmall,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(
-                UniversalConstants.borderRadiusMedium,
-              ),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(
-                UniversalConstants.borderRadiusMedium,
-              ),
-              borderSide: BorderSide(
-                color: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-                width: 1.0,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(
-                UniversalConstants.borderRadiusMedium,
-              ),
-              borderSide: BorderSide(
-                color: isDark ? AppColors.primaryDark : AppColors.primaryLight,
-                width: 2.0,
-              ),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(
-                UniversalConstants.borderRadiusMedium,
-              ),
-              borderSide: BorderSide(
-                color: isDark ? AppColors.errorDark : AppColors.errorLight,
-                width: 1.0,
-              ),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(
-                UniversalConstants.borderRadiusMedium,
-              ),
-              borderSide: BorderSide(
-                color: isDark ? AppColors.errorDark : AppColors.errorLight,
-                width: 2.0,
-              ),
-            ),
+        suffixIcon:
+            widget.showObscureTextToggle
+                ? IconButton(
+                  icon: Icon(
+                    _obscureText ? LineIcons.eyeSlash : LineIcons.eye,
+                    color: theme.iconTheme.color,
+                  ),
+                  padding: const EdgeInsets.all(
+                    UniversalConstants.spacingMedium,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscureText = !_obscureText;
+                    });
+                  },
+                )
+                : widget.suffixIcon,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(
+            UniversalConstants.borderRadiusMedium,
           ),
+          borderSide: BorderSide(color: borderColor, width: 0.5),
         ),
-      ],
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(
+            UniversalConstants.borderRadiusMedium,
+          ),
+          borderSide: BorderSide(color: borderColor, width: 0.5),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(
+            UniversalConstants.borderRadiusMedium,
+          ),
+          borderSide: BorderSide(color: theme.colorScheme.primary, width: 2.0),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(
+            UniversalConstants.borderRadiusMedium,
+          ),
+          borderSide: BorderSide(color: theme.colorScheme.error),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(
+            UniversalConstants.borderRadiusMedium,
+          ),
+          borderSide: BorderSide(color: theme.colorScheme.error, width: 2.0),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: UniversalConstants.spacingMedium,
+          vertical: UniversalConstants.spacingMedium,
+        ),
+        filled: true,
+        fillColor: isDark ? Colors.black12 : Colors.white,
+      ),
+      style: TextStyle(color: isDark ? Colors.white : Colors.black87),
     );
   }
 }

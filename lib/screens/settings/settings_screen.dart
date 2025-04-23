@@ -5,7 +5,7 @@ import 'package:line_icons/line_icons.dart';
 import '../../blocs/app/app_bloc.dart';
 import '../../blocs/app/app_state.dart';
 import '../../blocs/auth/app_auth_bloc.dart';
-import '../../blocs/auth/auth_event.dart';
+import '../../blocs/auth/app_auth_event.dart';
 import '../../blocs/localization/localization_bloc.dart';
 import '../../blocs/localization/localization_event.dart';
 import '../../blocs/theme/theme_bloc.dart';

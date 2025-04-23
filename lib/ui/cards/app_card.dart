@@ -9,6 +9,8 @@ class AppCard extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final BorderRadius? borderRadius;
   final LinearGradient? gradient;
+  final Color? backgroundColor;
+  final double elevation;
 
   const AppCard({
     super.key,
@@ -18,6 +20,8 @@ class AppCard extends StatelessWidget {
     this.padding = const EdgeInsets.all(16),
     this.borderRadius,
     this.gradient,
+    this.backgroundColor,
+    this.elevation = 3.0,
   });
 
   @override
@@ -30,22 +34,19 @@ class AppCard extends StatelessWidget {
       height: height,
       padding: padding,
       decoration: BoxDecoration(
+        color: backgroundColor ?? (isDark ? theme.cardColor : Colors.white),
         borderRadius:
             borderRadius ??
             BorderRadius.circular(UniversalConstants.borderRadiusLarge),
-        gradient:
-            gradient ??
-            (isDark
-                ? LinearGradient(
-                  colors: [Colors.grey[850]!, Colors.grey[900]!],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                )
-                : LinearGradient(
-                  colors: [Colors.grey[100]!, Colors.grey[50]!],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                )),
+        gradient: gradient,
+        boxShadow: [
+          BoxShadow(
+            color: (isDark ? Colors.black : Colors.grey).withAlpha(20),
+            spreadRadius: 1,
+            blurRadius: elevation * 2,
+            offset: Offset(0, elevation / 2),
+          ),
+        ],
         border: Border.all(
           color: (isDark ? Colors.white : Colors.black).withAlpha(25),
           width: 0.5,

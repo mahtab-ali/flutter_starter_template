@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:line_icons/line_icons.dart';
 
 import '../../blocs/auth/app_auth_bloc.dart';
-import '../../blocs/auth/auth_state.dart';
+import '../../blocs/auth/app_auth_state.dart';
 import '../../blocs/onboarding/onboarding_bloc.dart';
 import '../../blocs/onboarding/onboarding_event.dart';
 import '../../blocs/onboarding/onboarding_state.dart';
@@ -85,7 +85,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     return MultiBlocListener(
       listeners: [
-        BlocListener<AppAuthBloc, AuthState>(
+        BlocListener<AppAuthBloc, AppAuthState>(
           listener: (context, state) {
             if (state is AuthAuthenticated || state is AuthUnauthenticated) {
               // If auth state changes while on splash, navigate immediately
@@ -121,13 +121,6 @@ class _SplashScreenState extends State<SplashScreen> {
                   borderRadius: BorderRadius.circular(
                     UniversalConstants.borderRadiusCircular,
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: theme.shadowColor.withAlpha(50),
-                      blurRadius: 15,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
                 ),
                 child: Icon(
                   LineIcons.rocket,

@@ -4,6 +4,7 @@ import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/onboarding/onboarding_screen.dart';
+import '../screens/profile/profile_screen.dart';
 import '../screens/settings/settings_screen.dart';
 import '../screens/splash/splash_screen.dart';
 
@@ -18,6 +19,7 @@ class AppRoutes {
   static const String forgotPassword = '/forgot-password';
   static const String home = '/home';
   static const String settings = '/settings';
+  static const String profile = '/profile';
 
   /// The route generator callback used by the MaterialApp
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
@@ -37,6 +39,8 @@ class AppRoutes {
       return MaterialPageRoute(builder: (_) => const HomeScreen());
     } else if (routeName == AppRoutes.settings) {
       return MaterialPageRoute(builder: (_) => const SettingsScreen());
+    } else if (routeName == profile) {
+      return MaterialPageRoute(builder: (_) => const ProfileScreen());
     } else {
       // If there is no such named route, return a 404 page
       return MaterialPageRoute(
