@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:starter_template_flutter/blocs/localization/localization_bloc.dart';
-import 'package:starter_template_flutter/blocs/theme/theme_bloc.dart';
-import 'package:starter_template_flutter/screens/splash/splash_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'i18n/app_localizations.dart';
 
+import 'blocs/localization/localization_bloc.dart';
 import 'blocs/localization/localization_state.dart';
+import 'blocs/theme/theme_bloc.dart';
 import 'blocs/theme/theme_state.dart';
 import 'config/app_config.dart';
+import 'config/routes.dart';
 import 'core/dependency_injection.dart';
+import 'i18n/app_localizations.dart';
 import 'themes/theme_data.dart';
 
 Future<void> main() async {
@@ -66,7 +65,8 @@ class MyApp extends StatelessWidget {
                 ],
                 supportedLocales: AppConfig.supportedLocales,
                 scaffoldMessengerKey: GlobalKey<ScaffoldMessengerState>(),
-                home: const SplashScreen(),
+                initialRoute: AppRoutes.splash,
+                onGenerateRoute: AppRoutes.onGenerateRoute,
               );
             },
           );

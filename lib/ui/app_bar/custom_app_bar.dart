@@ -1,68 +1,75 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:line_icons/line_icons.dart';
 
 import '../../i18n/app_localizations.dart';
-import '../../themes/universal_constants.dart';
+import '../../utils/helper.dart';
 import '../../widgets/app_bar_actions.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String? title;
-  final bool centerTitle;
-  final List<Widget>? actions;
+  final String title;
   final bool automaticallyImplyLeading;
+  final bool centerTitle;
+  final bool elevation;
+  final List<Widget>? actions;
   final Widget? leading;
+  final bool hideActions;
   final Color? backgroundColor;
-  final SystemUiOverlayStyle? systemOverlayStyle;
-  final double? elevation;
   final VoidCallback? onBackPressed;
-  final bool showActions;
+
+  // Standard app bar size
+  static const double _kAppBarHeight = kToolbarHeight;
 
   const CustomAppBar({
     super.key,
-    this.title,
-    this.centerTitle = true,
-    this.actions,
+    required this.title,
     this.automaticallyImplyLeading = true,
+    this.centerTitle = true,
+    this.elevation = false,
+    this.actions,
     this.leading,
+    this.hideActions = false,
     this.backgroundColor,
-    this.systemOverlayStyle,
-    this.elevation,
     this.onBackPressed,
-    this.showActions = true,
   });
+
+  @override
+  Size get preferredSize => const Size.fromHeight(_kAppBarHeight);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final i18n = AppLocalizations.of(context);
-    // Get the text direction to handle RTL/LTR properly
-    final isRtl = Directionality.of(context) == TextDirection.rtl;
 
     return AppBar(
-      title: title != null ? Text(title!) : null,
+      title: Text(title),
       centerTitle: centerTitle,
-      backgroundColor: backgroundColor ?? Colors.transparent,
-      elevation: elevation ?? 0,
-      systemOverlayStyle: systemOverlayStyle,
-      automaticallyImplyLeading: automaticallyImplyLeading,
+      elevation: elevation ? 4.0 : 0.0,
+      backgroundColor: backgroundColor ?? theme.appBarTheme.backgroundColor,
+      scrolledUnderElevation: 0,
+      // If we have a custom leading widget, use it
       leading:
           leading ??
-          (automaticallyImplyLeading && Navigator.of(context).canPop()
+          // Otherwise, check if we should show the back button
+          (automaticallyImplyLeading
               ? IconButton(
                 icon: Icon(
-                  // Use the appropriate directional icon based on text direction
-                  isRtl ? LineIcons.alternateLongArrowRight : LineIcons.alternateLongArrowLeft,
-                  size: UniversalConstants.iconSizeLarge,
+                  Helper.getDirectionalIcon(
+                    context,
+                    LineIcons.alternateLongArrowLeft,
+                    LineIcons.alternateLongArrowRight,
+                  ),
+                  color: theme.iconTheme.color,
                 ),
-                onPressed: onBackPressed ?? () => Navigator.of(context).pop(),
+                onPressed:
+                    onBackPressed ??
+                    () {
+                      Navigator.pop(context);
+                    },
                 tooltip: i18n.translate('back'),
               )
               : null),
-      actions: showActions ? actions ?? const [AppBarActions()] : actions,
+      // Use provided actions or default app bar actions unless hideActions is true
+      actions: hideActions ? null : actions ?? const [AppBarActions()],
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

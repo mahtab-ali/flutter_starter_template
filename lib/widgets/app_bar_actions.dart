@@ -92,7 +92,6 @@ class AppBarActions extends StatelessWidget {
       context: context,
       child: AppBottomSheetContent(
         title: i18n.translate('select_language'),
-        icon: Icon(LineIcons.language, color: theme.iconTheme.color),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

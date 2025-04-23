@@ -5,7 +5,7 @@ import 'localization_event.dart';
 import 'localization_state.dart';
 
 class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
-  static const String PREFS_LANGUAGE_CODE = 'language_code';
+  static const String prefsLanguageCode = 'language_code';
 
   LocalizationBloc() : super(const LocalizationInitial(locale: Locale('en'))) {
     on<LocaleChanged>(_onLocaleChanged);
@@ -14,7 +14,7 @@ class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
 
   Future<void> _loadLocale() async {
     final prefs = await SharedPreferences.getInstance();
-    final languageCode = prefs.getString(PREFS_LANGUAGE_CODE) ?? 'en';
+    final languageCode = prefs.getString(prefsLanguageCode) ?? 'en';
     add(LocaleChanged(languageCode: languageCode));
   }
 
@@ -23,7 +23,7 @@ class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
     Emitter<LocalizationState> emit,
   ) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(PREFS_LANGUAGE_CODE, event.languageCode);
+    await prefs.setString(prefsLanguageCode, event.languageCode);
     emit(LocalizationLoaded(locale: Locale(event.languageCode)));
   }
 }

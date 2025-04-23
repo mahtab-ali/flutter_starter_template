@@ -22,8 +22,8 @@ class AppGradients {
         colors: [
           isDark ? AppColors.primaryDark : AppColors.primaryLight,
           isDark
-              ? AppColors.primaryDark.withOpacity(0.7)
-              : AppColors.primaryLight.withOpacity(0.7),
+              ? AppColors.primaryDark.withAlpha(180)
+              : AppColors.primaryLight.withAlpha(180),
         ],
       );
 
@@ -34,8 +34,8 @@ class AppGradients {
         colors: [
           isDark ? AppColors.primaryDark : AppColors.primaryLight,
           isDark
-              ? AppColors.primaryDark.withOpacity(0.7)
-              : AppColors.primaryLight.withOpacity(0.7),
+              ? AppColors.primaryDark.withAlpha(180)
+              : AppColors.primaryLight.withAlpha(180),
         ],
       );
 
@@ -46,8 +46,8 @@ class AppGradients {
     colors: [
       isDark ? AppColors.accentDark : AppColors.accentLight,
       isDark
-          ? AppColors.accentDark.withOpacity(0.7)
-          : AppColors.accentLight.withOpacity(0.7),
+          ? AppColors.accentDark.withAlpha(180)
+          : AppColors.accentLight.withAlpha(180),
     ],
   );
 
@@ -57,8 +57,8 @@ class AppGradients {
     colors: [
       isDark ? AppColors.accentDark : AppColors.accentLight,
       isDark
-          ? AppColors.accentDark.withOpacity(0.7)
-          : AppColors.accentLight.withOpacity(0.7),
+          ? AppColors.accentDark.withAlpha(180)
+          : AppColors.accentLight.withAlpha(180),
     ],
   );
 
@@ -79,21 +79,33 @@ class AppGradients {
     colors: [
       isDark ? AppColors.primaryDark : AppColors.primaryLight,
       isDark
-          ? AppColors.primaryDark.withOpacity(0.3)
-          : AppColors.primaryLight.withOpacity(0.3),
+          ? AppColors.primaryDark.withAlpha(75)
+          : AppColors.primaryLight.withAlpha(75),
     ],
   );
 
   // Glass-effect gradients
-  static LinearGradient glassLight({bool isDark = false}) => LinearGradient(
+  static LinearGradient glassLight({
+    bool isDark = false,
+    double opacity = 0.5,
+  }) => LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Colors.white.withOpacity(0.5), Colors.white.withOpacity(0.2)],
+    colors: [
+      Colors.white.withAlpha((opacity * 125).round()),
+      Colors.white.withAlpha((opacity * 50).round()),
+    ],
   );
 
-  static LinearGradient glassDark({bool isDark = false}) => LinearGradient(
+  static LinearGradient glassDark({
+    bool isDark = false,
+    double opacity = 0.5,
+  }) => LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Colors.black.withOpacity(0.3), Colors.black.withOpacity(0.1)],
+    colors: [
+      Colors.black.withAlpha((opacity * 150).round()),
+      Colors.black.withAlpha((opacity * 50).round()),
+    ],
   );
 }

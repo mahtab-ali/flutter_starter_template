@@ -5,8 +5,10 @@ import 'package:line_icons/line_icons.dart';
 import '../../blocs/auth/app_auth_bloc.dart';
 import '../../blocs/auth/auth_event.dart';
 import '../../blocs/auth/auth_state.dart';
+import '../../config/routes.dart';
 import '../../i18n/app_localizations.dart';
 import '../../themes/app_gradients.dart';
+import '../../themes/app_text_styles.dart';
 import '../../themes/universal_constants.dart';
 import '../../ui/app_bar/custom_app_bar.dart';
 import '../../ui/buttons/gradient_button.dart';
@@ -51,6 +53,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final i18n = AppLocalizations.of(context);
+    final locale = i18n.locale;
 
     return BlocConsumer<AppAuthBloc, AuthState>(
       listener: (context, state) {
@@ -127,7 +130,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                     i18n.translate(
                                       'reset_password_instruction',
                                     ),
-                                    style: theme.textTheme.bodyLarge,
+                                    style:
+                                        isDark
+                                            ? AppTextStyles.bodyLargeDark(
+                                              locale: locale,
+                                            )
+                                            : AppTextStyles.bodyLargeLight(
+                                              locale: locale,
+                                            ),
                                     textAlign: TextAlign.center,
                                   ),
                                   const SizedBox(
@@ -181,11 +191,22 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                       i18n.translate(
                                         'reset_password_success_title',
                                       ),
-                                      style: theme.textTheme.titleLarge
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: theme.colorScheme.primary,
-                                          ),
+                                      style:
+                                          isDark
+                                              ? AppTextStyles.headingSmallDark(
+                                                locale: locale,
+                                              ).copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color:
+                                                    theme.colorScheme.primary,
+                                              )
+                                              : AppTextStyles.headingSmallLight(
+                                                locale: locale,
+                                              ).copyWith(
+                                                fontWeight: FontWeight.bold,
+                                                color:
+                                                    theme.colorScheme.primary,
+                                              ),
                                     ),
                                   ),
                                   const SizedBox(
@@ -194,14 +215,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                   Text(
                                     i18n.translateWithArgs(
                                       'reset_password_success_message',
-                                      {
-                                        'email':
-                                            state is AuthPasswordResetSuccess
-                                                ? state.email
-                                                : i18n.translate('email_hint'),
-                                      },
+                                      {'email': state.email},
                                     ),
-                                    style: theme.textTheme.bodyMedium,
+                                    style:
+                                        isDark
+                                            ? AppTextStyles.bodyMediumDark(
+                                              locale: locale,
+                                            )
+                                            : AppTextStyles.bodyMediumLight(
+                                              locale: locale,
+                                            ),
                                   ),
                                   const SizedBox(
                                     height: UniversalConstants.spacingLarge,
@@ -210,7 +233,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                   // Back to Login Button
                                   GradientButton(
                                     text: i18n.translate('back_to_login'),
-                                    onPressed: () => Navigator.pop(context),
+                                    onPressed:
+                                        () => AppRoutes.navigateAndReplace(
+                                          context,
+                                          AppRoutes.login,
+                                        ),
                                     gradient: AppGradients.primaryDiagonal(
                                       isDark: isDark,
                                     ),
@@ -228,16 +255,28 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             Center(
                               child: TextButton(
                                 onPressed: () {
-                                  Navigator.pop(context);
+                                  AppRoutes.navigateAndReplace(
+                                    context,
+                                    AppRoutes.login,
+                                  );
                                 },
                                 style: TextButton.styleFrom(
                                   foregroundColor: theme.colorScheme.primary,
                                 ),
                                 child: Text(
                                   i18n.translate('back_to_login'),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style:
+                                      isDark
+                                          ? AppTextStyles.bodyMediumDark(
+                                            locale: locale,
+                                          ).copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          )
+                                          : AppTextStyles.bodyMediumLight(
+                                            locale: locale,
+                                          ).copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                 ),
                               ),
                             ),

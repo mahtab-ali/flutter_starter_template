@@ -2,17 +2,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:starter_template_flutter/blocs/auth/app_auth_bloc.dart';
-import 'package:starter_template_flutter/blocs/auth/auth_state.dart';
-import 'package:starter_template_flutter/blocs/onboarding/onboarding_bloc.dart';
-import 'package:starter_template_flutter/blocs/onboarding/onboarding_event.dart';
-import 'package:starter_template_flutter/blocs/onboarding/onboarding_state.dart';
-import 'package:starter_template_flutter/i18n/app_localizations.dart';
-import 'package:starter_template_flutter/screens/auth/login_screen.dart';
-import 'package:starter_template_flutter/screens/home/home_screen.dart';
-import 'package:starter_template_flutter/screens/onboarding/onboarding_screen.dart';
-import 'package:starter_template_flutter/services/onboarding_preferences.dart';
-import 'package:starter_template_flutter/themes/universal_constants.dart';
+
+import '../../blocs/auth/app_auth_bloc.dart';
+import '../../blocs/auth/auth_state.dart';
+import '../../blocs/onboarding/onboarding_bloc.dart';
+import '../../blocs/onboarding/onboarding_event.dart';
+import '../../blocs/onboarding/onboarding_state.dart';
+import '../../config/routes.dart';
+import '../../i18n/app_localizations.dart';
+import '../../services/onboarding_preferences.dart';
+import '../../themes/app_text_styles.dart';
+import '../../themes/universal_constants.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -48,27 +48,24 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _navigateBasedOnAuthState() async {
     final authState = context.read<AppAuthBloc>().state;
-    final onboardingState = context.read<OnboardingBloc>().state;
+    // Removed unused onboardingState variable
     final bool isOnboardingCompleted =
         await OnboardingPreferences.isOnboardingCompleted();
 
+    // Guard against widget being unmounted during async operation
+    if (!mounted) return;
+
     if (authState is AuthAuthenticated) {
       // If authenticated, go to home screen regardless of onboarding status
-      Navigator.of(
-        context,
-      ).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
+      AppRoutes.navigateAndRemoveUntil(context, AppRoutes.home);
     } else if (authState is AuthUnauthenticated) {
       // If unauthenticated, check if onboarding is needed
       if (!isOnboardingCompleted) {
         // Show onboarding if not completed
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const OnboardingScreen()),
-        );
+        AppRoutes.navigateAndRemoveUntil(context, AppRoutes.onboarding);
       } else {
         // Skip to login if onboarding is completed
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
-        );
+        AppRoutes.navigateAndRemoveUntil(context, AppRoutes.login);
       }
     }
   }
@@ -83,6 +80,8 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final i18n = AppLocalizations.of(context);
+    final locale = i18n.locale;
+    final isDark = theme.brightness == Brightness.dark;
 
     return MultiBlocListener(
       listeners: [
@@ -124,7 +123,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: theme.shadowColor.withOpacity(0.2),
+                      color: theme.shadowColor.withAlpha(50),
                       blurRadius: 15,
                       offset: const Offset(0, 5),
                     ),
@@ -142,10 +141,20 @@ class _SplashScreenState extends State<SplashScreen> {
               // App name
               Text(
                 i18n.translate('app_name'),
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.onBackground,
-                ),
+                style:
+                    isDark
+                        ? AppTextStyles.headingMediumDark(
+                          locale: locale,
+                        ).copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.onSurface,
+                        )
+                        : AppTextStyles.headingMediumLight(
+                          locale: locale,
+                        ).copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.onSurface,
+                        ),
               ),
 
               const SizedBox(height: UniversalConstants.spacingMedium),
@@ -155,7 +164,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 width: 200, // Small, contained size
                 child: LinearProgressIndicator(
                   value: _loadingValue,
-                  backgroundColor: theme.colorScheme.surfaceVariant,
+                  backgroundColor: theme.colorScheme.surfaceContainerHighest,
                   valueColor: AlwaysStoppedAnimation<Color>(
                     theme.colorScheme.primary,
                   ),

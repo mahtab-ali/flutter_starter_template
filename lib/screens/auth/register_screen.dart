@@ -5,8 +5,10 @@ import 'package:line_icons/line_icons.dart';
 import '../../blocs/auth/app_auth_bloc.dart';
 import '../../blocs/auth/auth_event.dart';
 import '../../blocs/auth/auth_state.dart';
+import '../../config/routes.dart';
 import '../../i18n/app_localizations.dart';
 import '../../themes/app_gradients.dart';
+import '../../themes/app_text_styles.dart';
 import '../../themes/universal_constants.dart';
 import '../../ui/app_bar/custom_app_bar.dart';
 import '../../ui/buttons/gradient_button.dart';
@@ -14,8 +16,6 @@ import '../../ui/inputs/custom_text_field.dart';
 import '../../utils/keyboard_util.dart';
 import '../../utils/toast_util.dart';
 import '../../utils/validators.dart';
-import '../home/home_screen.dart';
-import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -34,8 +34,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _nameFocusNode = FocusNode();
   final _emailFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
-
-  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -78,202 +76,216 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final i18n = AppLocalizations.of(context);
+    final locale = i18n.locale;
 
-    return BlocListener<AppAuthBloc, AuthState>(
+    return BlocConsumer<AppAuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is AuthLoading) {
-          setState(() => _isLoading = true);
-        } else {
-          setState(() => _isLoading = false);
-
-          if (state is AuthError) {
-            ToastUtil.showError(context, state.message);
-          } else if (state is AuthAuthenticated) {
-            ToastUtil.showSuccess(
-              context,
-              i18n.translate('registration_successful'),
-            );
-            // Navigate to home screen after successful registration
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const HomeScreen()),
-            );
-          }
+        if (state is AuthError) {
+          ToastUtil.showError(context, state.message);
+        } else if (state is AuthAuthenticated) {
+          ToastUtil.showSuccess(
+            context,
+            i18n.translate('registration_successful'),
+          );
+          // Navigate to home screen after successful registration
+          AppRoutes.navigateAndRemoveUntil(context, AppRoutes.home);
         }
       },
-      child: GestureDetector(
-        // Add tap listener to dismiss keyboard when tapping outside
-        onTap: () => KeyboardUtil.hideKeyboard(context),
-        child: Scaffold(
-          backgroundColor: theme.scaffoldBackgroundColor,
-          appBar: CustomAppBar(
-            title: i18n.translate('register'),
-            centerTitle: false,
-          ),
-          body: SafeArea(
-            child: Center(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(
-                    UniversalConstants.spacingLarge,
-                  ),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        // App Logo with styled icon
-                        Center(
-                          child: Icon(
-                            LineIcons.userPlus,
-                            size: 60,
-                            color: theme.colorScheme.primary,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: UniversalConstants.spacingXLarge,
-                        ),
+      builder: (context, state) {
+        final bool isLoading = state is AuthLoading;
 
-                        // Form container with theme-aware background
-                        Container(
-                          padding: const EdgeInsets.all(
-                            UniversalConstants.spacingLarge,
-                          ),
-                          decoration: BoxDecoration(
-                            color: theme.cardColor,
-                            borderRadius: BorderRadius.circular(
-                              UniversalConstants.borderRadiusLarge,
+        return GestureDetector(
+          // Add tap listener to dismiss keyboard when tapping outside
+          onTap: () => KeyboardUtil.hideKeyboard(context),
+          child: Scaffold(
+            backgroundColor: theme.scaffoldBackgroundColor,
+            appBar: CustomAppBar(
+              title: i18n.translate('register'),
+              centerTitle: false,
+            ),
+            body: SafeArea(
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(
+                      UniversalConstants.spacingLarge,
+                    ),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // App Logo with styled icon
+                          Center(
+                            child: Icon(
+                              LineIcons.userPlus,
+                              size: 60,
+                              color: theme.colorScheme.primary,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: theme.shadowColor.withAlpha(25),
-                                blurRadius: 10,
-                                spreadRadius: 1,
-                              ),
-                            ],
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          const SizedBox(
+                            height: UniversalConstants.spacingXLarge,
+                          ),
+
+                          // Form container with theme-aware background
+                          Container(
+                            padding: const EdgeInsets.all(
+                              UniversalConstants.spacingLarge,
+                            ),
+                            decoration: BoxDecoration(
+                              color: theme.cardColor,
+                              borderRadius: BorderRadius.circular(
+                                UniversalConstants.borderRadiusLarge,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: theme.shadowColor.withAlpha(25),
+                                  blurRadius: 10,
+                                  spreadRadius: 1,
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Full Name Field
+                                CustomTextField(
+                                  label: i18n.translate('full_name'),
+                                  hint: i18n.translate('full_name_hint'),
+                                  controller: _nameController,
+                                  focusNode: _nameFocusNode,
+                                  textInputAction: TextInputAction.next,
+                                  onFieldSubmitted:
+                                      (_) => _fieldFocusChange(
+                                        context,
+                                        _nameFocusNode,
+                                        _emailFocusNode,
+                                      ),
+                                  prefixIcon: Icon(
+                                    LineIcons.user,
+                                    color: theme.iconTheme.color,
+                                  ),
+                                  validator:
+                                      (value) => Validators.validateName(value),
+                                ),
+                                const SizedBox(
+                                  height: UniversalConstants.spacingMedium,
+                                ),
+
+                                // Email Field
+                                CustomTextField(
+                                  label: i18n.translate('email'),
+                                  hint: i18n.translate('email_hint'),
+                                  controller: _emailController,
+                                  focusNode: _emailFocusNode,
+                                  keyboardType: TextInputType.emailAddress,
+                                  textInputAction: TextInputAction.next,
+                                  onFieldSubmitted:
+                                      (_) => _fieldFocusChange(
+                                        context,
+                                        _emailFocusNode,
+                                        _passwordFocusNode,
+                                      ),
+                                  prefixIcon: Icon(
+                                    LineIcons.envelope,
+                                    color: theme.iconTheme.color,
+                                  ),
+                                  validator:
+                                      (value) =>
+                                          Validators.validateEmail(value),
+                                ),
+                                const SizedBox(
+                                  height: UniversalConstants.spacingMedium,
+                                ),
+
+                                // Password Field
+                                CustomTextField(
+                                  label: i18n.translate('password'),
+                                  hint: i18n.translate('password_hint'),
+                                  controller: _passwordController,
+                                  focusNode: _passwordFocusNode,
+                                  textInputAction: TextInputAction.done,
+                                  onFieldSubmitted: (_) => _register(),
+                                  obscureText: true,
+                                  prefixIcon: Icon(
+                                    LineIcons.lock,
+                                    color: theme.iconTheme.color,
+                                  ),
+                                  validator:
+                                      (value) =>
+                                          Validators.validatePassword(value),
+                                ),
+                                const SizedBox(
+                                  height: UniversalConstants.spacingLarge,
+                                ),
+
+                                // Register Button
+                                GradientButton(
+                                  text: i18n.translate('register'),
+                                  isLoading: isLoading,
+                                  onPressed: _register,
+                                  gradient: AppGradients.primaryDiagonal(
+                                    isDark: isDark,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            height: UniversalConstants.spacingLarge,
+                          ),
+
+                          // Login Link
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              // Full Name Field
-                              CustomTextField(
-                                label: i18n.translate('full_name'),
-                                hint: i18n.translate('full_name_hint'),
-                                controller: _nameController,
-                                focusNode: _nameFocusNode,
-                                textInputAction: TextInputAction.next,
-                                onFieldSubmitted:
-                                    (_) => _fieldFocusChange(
-                                      context,
-                                      _nameFocusNode,
-                                      _emailFocusNode,
-                                    ),
-                                prefixIcon: Icon(
-                                  LineIcons.user,
-                                  color: theme.iconTheme.color,
+                              Text(
+                                i18n.translate('already_have_account'),
+                                style:
+                                    isDark
+                                        ? AppTextStyles.bodyMediumDark(
+                                          locale: locale,
+                                        )
+                                        : AppTextStyles.bodyMediumLight(
+                                          locale: locale,
+                                        ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                style: TextButton.styleFrom(
+                                  foregroundColor: theme.colorScheme.primary,
                                 ),
-                                validator:
-                                    (value) => Validators.validateName(value),
-                              ),
-                              const SizedBox(
-                                height: UniversalConstants.spacingMedium,
-                              ),
-
-                              // Email Field
-                              CustomTextField(
-                                label: i18n.translate('email'),
-                                hint: i18n.translate('email_hint'),
-                                controller: _emailController,
-                                focusNode: _emailFocusNode,
-                                keyboardType: TextInputType.emailAddress,
-                                textInputAction: TextInputAction.next,
-                                onFieldSubmitted:
-                                    (_) => _fieldFocusChange(
-                                      context,
-                                      _emailFocusNode,
-                                      _passwordFocusNode,
-                                    ),
-                                prefixIcon: Icon(
-                                  LineIcons.envelope,
-                                  color: theme.iconTheme.color,
-                                ),
-                                validator:
-                                    (value) => Validators.validateEmail(value),
-                              ),
-                              const SizedBox(
-                                height: UniversalConstants.spacingMedium,
-                              ),
-
-                              // Password Field
-                              CustomTextField(
-                                label: i18n.translate('password'),
-                                hint: i18n.translate('password_hint'),
-                                controller: _passwordController,
-                                focusNode: _passwordFocusNode,
-                                textInputAction: TextInputAction.done,
-                                onFieldSubmitted: (_) => _register(),
-                                obscureText: true,
-                                prefixIcon: Icon(
-                                  LineIcons.lock,
-                                  color: theme.iconTheme.color,
-                                ),
-                                validator:
-                                    (value) =>
-                                        Validators.validatePassword(value),
-                              ),
-                              const SizedBox(
-                                height: UniversalConstants.spacingLarge,
-                              ),
-
-                              // Register Button
-                              GradientButton(
-                                text: i18n.translate('register'),
-                                isLoading: _isLoading,
-                                onPressed: _register,
-                                gradient: AppGradients.primaryDiagonal(
-                                  isDark: isDark,
+                                child: Text(
+                                  i18n.translate('login'),
+                                  style:
+                                      isDark
+                                          ? AppTextStyles.bodyMediumDark(
+                                            locale: locale,
+                                          ).copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          )
+                                          : AppTextStyles.bodyMediumLight(
+                                            locale: locale,
+                                          ).copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        const SizedBox(height: UniversalConstants.spacingLarge),
-
-                        // Login Link
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              i18n.translate('already_have_account'),
-                              style: TextStyle(
-                                color: theme.colorScheme.onSurface,
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              style: TextButton.styleFrom(
-                                foregroundColor: theme.colorScheme.primary,
-                              ),
-                              child: Text(
-                                i18n.translate('login'),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

@@ -26,13 +26,16 @@ class AppTheme {
       useMaterial3: AppConfig.useMaterial3,
       brightness: Brightness.light,
       fontFamily: fontFamily, // Set dynamic font family for entire theme
+      dividerColor: Colors.black.withAlpha(
+        20,
+      ), // Add divider color with 20% opacity
       colorScheme: const ColorScheme.light(
         primary: AppColors.primaryLight,
         onPrimary: Colors.white,
         secondary: AppColors.accentLight,
         onSecondary: Colors.white,
-        background: AppColors.backgroundLight,
-        surface: AppColors.surfaceLight,
+        surface: AppColors.backgroundLight,
+        onSurface: AppColors.textPrimaryLight,
         error: AppColors.errorLight,
       ),
       scaffoldBackgroundColor: AppColors.backgroundLight,
@@ -129,13 +132,16 @@ class AppTheme {
       useMaterial3: AppConfig.useMaterial3,
       brightness: Brightness.dark,
       fontFamily: fontFamily, // Set dynamic font family for entire theme
+      dividerColor: Colors.white.withAlpha(
+        20,
+      ), // Add divider color with 20% opacity
       colorScheme: const ColorScheme.dark(
         primary: AppColors.primaryDark,
         onPrimary: Colors.black,
         secondary: AppColors.accentDark,
         onSecondary: Colors.black,
-        background: AppColors.backgroundDark,
-        surface: AppColors.surfaceDark,
+        surface: AppColors.backgroundDark,
+        onSurface: AppColors.textPrimaryDark,
         error: AppColors.errorDark,
       ),
       scaffoldBackgroundColor: AppColors.backgroundDark,

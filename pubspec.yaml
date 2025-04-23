@@ -54,6 +54,10 @@ dependencies:
   responsive_framework: ^1.5.1
   flutter_styled_toast: ^2.2.1
   
+  # Device Info
+  device_info_plus: ^9.1.2
+  package_info_plus: ^5.0.1
+  
   # Utils
   flutter_dotenv: ^5.1.0
   intl: ^0.19.0

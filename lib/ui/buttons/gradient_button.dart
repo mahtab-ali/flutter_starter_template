@@ -18,7 +18,7 @@ class GradientButton extends StatelessWidget {
   final IconPosition iconPosition;
 
   const GradientButton({
-    Key? key,
+    super.key,
     required this.text,
     required this.onPressed,
     this.isLoading = false,
@@ -30,7 +30,7 @@ class GradientButton extends StatelessWidget {
     this.gradient,
     this.icon,
     this.iconPosition = IconPosition.right,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class GradientButton extends StatelessWidget {
             BorderRadius.circular(UniversalConstants.borderRadiusMedium),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withAlpha(25),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),

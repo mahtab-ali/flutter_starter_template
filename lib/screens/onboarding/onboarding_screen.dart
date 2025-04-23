@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:line_icons/line_icons.dart';
+
 import '../../blocs/onboarding/onboarding_bloc.dart';
 import '../../blocs/onboarding/onboarding_event.dart';
 import '../../blocs/onboarding/onboarding_state.dart';
+import '../../config/routes.dart';
 import '../../i18n/app_localizations.dart';
 import '../../themes/app_gradients.dart';
 import '../../themes/universal_constants.dart';
 import '../../ui/buttons/gradient_button.dart';
-import '../../widgets/onboarding/onboarding_card.dart';
+import '../../utils/helper.dart';
 import '../../widgets/app_bar_actions.dart';
-import '../auth/login_screen.dart';
+import '../../widgets/onboarding/onboarding_card.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -59,9 +61,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
   void _completeOnboarding() {
     context.read<OnboardingBloc>().add(OnboardingCompleted());
-    Navigator.of(
-      context,
-    ).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
+    AppRoutes.navigateAndRemoveUntil(context, AppRoutes.login);
   }
 
   @override
@@ -69,7 +69,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final i18n = AppLocalizations.of(context);
-    final isRTL = i18n.isRtl;
 
     return BlocBuilder<OnboardingBloc, OnboardingState>(
       builder: (context, state) {
@@ -221,7 +220,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                             color: theme.colorScheme.surface,
                             boxShadow: [
                               BoxShadow(
-                                color: theme.shadowColor.withOpacity(0.15),
+                                color: theme.shadowColor.withAlpha(40),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -229,9 +228,11 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                           ),
                           child: IconButton(
                             icon: Icon(
-                              isRTL
-                                  ? LineIcons.alternateLongArrowLeft
-                                  : LineIcons.alternateLongArrowRight,
+                              Helper.getDirectionalIcon(
+                                context,
+                                LineIcons.alternateLongArrowRight,
+                                LineIcons.alternateLongArrowLeft,
+                              ),
                               color: theme.colorScheme.primary,
                               size: UniversalConstants.iconSizeMedium,
                             ),

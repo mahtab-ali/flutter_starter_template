@@ -67,5 +67,11 @@
   "onboarding_auth_description": "User authentication with Supabase, including login, sign up, and password recovery.",
   
   "onboarding_customize_title": "Customizable Experience",
-  "onboarding_customize_description": "Enjoy dark mode, multiple languages, and a clean, beautiful interface."
+  "onboarding_customize_description": "Enjoy dark mode, multiple languages, and a clean, beautiful interface.",
+  
+  "device_info": "Device Information",
+  "logout_confirmation": "Logout Confirmation",
+  "logout_confirmation_message": "Are you sure you want to logout?",
+  "logged_out_successfully": "You have been successfully logged out",
+  "account": "Account"
 }

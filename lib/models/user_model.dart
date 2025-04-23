@@ -26,9 +26,12 @@ class UserModel {
       email: user.email ?? '',
       displayName: user.userMetadata?['name'] as String?,
       photoUrl: user.userMetadata?['avatar_url'] as String?,
-      createdAt: user.createdAt != null ? DateTime.parse(user.createdAt) : null,
+      createdAt:
+          user.createdAt.isNotEmpty ? DateTime.parse(user.createdAt) : null,
       lastLogin:
-          user.lastSignInAt != null ? DateTime.parse(user.lastSignInAt!) : null,
+          user.lastSignInAt != null
+              ? DateTime.tryParse(user.lastSignInAt!)
+              : null,
     );
   }
 
