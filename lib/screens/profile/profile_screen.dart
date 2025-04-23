@@ -127,168 +127,139 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showEditProfileDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        final i18n = AppLocalizations.of(context);
-        final locale = i18n.locale;
-        final theme = Theme.of(context);
-        final isDark = theme.brightness == Brightness.dark;
+    final i18n = AppLocalizations.of(context);
 
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-              UniversalConstants.borderRadiusLarge,
-            ),
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(UniversalConstants.spacingLarge),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  i18n.translate('edit_profile'),
-                  style:
-                      isDark
-                          ? AppTextStyles.headingSmallDark(locale: locale)
-                          : AppTextStyles.headingSmallLight(locale: locale),
-                ),
-                const SizedBox(height: UniversalConstants.spacingMedium),
-                CustomTextField(
-                  label: i18n.translate('full_name'),
-                  hint: i18n.translate('full_name_hint'),
-                  controller: _displayNameController,
-                  prefixIcon: Icon(LineIcons.userEdit),
-                ),
-                const SizedBox(height: UniversalConstants.spacingLarge),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    PrimaryButton.text(
-                      text: i18n.translate('cancel'),
-                      onPressed: () => Navigator.of(context).pop(),
-                      minWidth: 100,
-                    ),
-                    const SizedBox(width: UniversalConstants.spacingMedium),
-                    PrimaryButton(
-                      text: i18n.translate('save'),
-                      onPressed: _isLoading ? null : _updateUserProfile,
-                      isLoading: _isLoading,
-                      minWidth: 100,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+    // Create content widget with text field
+    Widget formContent = CustomTextField(
+      label: i18n.translate('full_name'),
+      hint: i18n.translate('full_name_hint'),
+      controller: _displayNameController,
+      prefixIcon: Icon(LineIcons.userEdit),
+    );
+
+    List<Widget> actions = [
+      PrimaryButton.text(
+        text: i18n.translate('cancel'),
+        onPressed: () => Navigator.of(context).pop(),
+        minWidth: 120,
+        borderRadius: BorderRadius.circular(
+          UniversalConstants.borderRadiusFull,
+        ),
+      ),
+      PrimaryButton(
+        text: i18n.translate('save'),
+        onPressed: _isLoading ? null : _updateUserProfile,
+        isLoading: _isLoading, 
+        minWidth: 120,
+        borderRadius: BorderRadius.circular(
+          UniversalConstants.borderRadiusFull,
+        ),
+      ),
+    ];
+
+    CustomAlertDialog.showCustomForm(
+      context,
+      title: i18n.translate('edit_profile'),
+      formContent: formContent,
+      actions: actions,
+      customIcon: Icon(
+        LineIcons.userEdit,
+        color: Theme.of(context).colorScheme.primary,
+        size: 60.0,
+      ),
     );
   }
 
   void _showChangePasswordDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        final i18n = AppLocalizations.of(context);
-        final locale = i18n.locale;
-        final theme = Theme.of(context);
-        final isDark = theme.brightness == Brightness.dark;
+    final i18n = AppLocalizations.of(context);
 
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-              UniversalConstants.borderRadiusLarge,
-            ),
+    // Create form content with password fields
+    Widget formContent = Form(
+      key: _formKey,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CustomTextField(
+            label: i18n.translate('current_password'),
+            hint: '••••••••',
+            controller: _currentPasswordController,
+            prefixIcon: Icon(LineIcons.lock),
+            obscureText: true,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your current password';
+              }
+              return null;
+            },
           ),
-          child: Container(
-            padding: const EdgeInsets.all(UniversalConstants.spacingLarge),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    i18n.translate('change_password'),
-                    style:
-                        isDark
-                            ? AppTextStyles.headingSmallDark(locale: locale)
-                            : AppTextStyles.headingSmallLight(locale: locale),
-                  ),
-                  const SizedBox(height: UniversalConstants.spacingMedium),
-                  CustomTextField(
-                    label: i18n.translate('current_password'),
-                    hint: '••••••••',
-                    controller: _currentPasswordController,
-                    prefixIcon: Icon(LineIcons.lock),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your current password';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: UniversalConstants.spacingMedium),
-                  CustomTextField(
-                    label: i18n.translate('new_password'),
-                    hint: '••••••••',
-                    controller: _newPasswordController,
-                    prefixIcon: Icon(LineIcons.key),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a new password';
-                      }
-                      if (value.length < 6) {
-                        return 'Password must be at least 6 characters';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: UniversalConstants.spacingMedium),
-                  CustomTextField(
-                    label: i18n.translate('confirm_password'),
-                    hint: '••••••••',
-                    controller: _confirmPasswordController,
-                    prefixIcon: Icon(LineIcons.lockOpen),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please confirm your new password';
-                      }
-                      if (value != _newPasswordController.text) {
-                        return 'Passwords do not match';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: UniversalConstants.spacingLarge),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      PrimaryButton.text(
-                        text: i18n.translate('cancel'),
-                        onPressed: () => Navigator.of(context).pop(),
-                        minWidth: 100,
-                      ),
-                      const SizedBox(width: UniversalConstants.spacingMedium),
-                      PrimaryButton(
-                        text: i18n.translate('update'),
-                        onPressed: _isLoading ? null : _changePassword,
-                        isLoading: _isLoading,
-                        minWidth: 100,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+          const SizedBox(height: UniversalConstants.spacingMedium),
+          CustomTextField(
+            label: i18n.translate('new_password'),
+            hint: '••••••••',
+            controller: _newPasswordController,
+            prefixIcon: Icon(LineIcons.key),
+            obscureText: true,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter a new password';
+              }
+              if (value.length < 6) {
+                return 'Password must be at least 6 characters';
+              }
+              return null;
+            },
           ),
-        );
-      },
+          const SizedBox(height: UniversalConstants.spacingMedium),
+          CustomTextField(
+            label: i18n.translate('confirm_password'),
+            hint: '••••••••',
+            controller: _confirmPasswordController,
+            prefixIcon: Icon(LineIcons.lockOpen),
+            obscureText: true,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please confirm your new password';
+              }
+              if (value != _newPasswordController.text) {
+                return 'Passwords do not match';
+              }
+              return null;
+            },
+          ),
+        ],
+      ),
+    );
+
+    List<Widget> actions = [
+      PrimaryButton.text(
+        text: i18n.translate('cancel'),
+        onPressed: () => Navigator.of(context).pop(),
+        minWidth: 120,
+        borderRadius: BorderRadius.circular(
+          UniversalConstants.borderRadiusFull,
+        ),
+      ),
+      PrimaryButton(
+        text: i18n.translate('update'),
+        onPressed: _isLoading ? null : _changePassword,
+        isLoading: _isLoading,
+        minWidth: 120,
+        borderRadius: BorderRadius.circular(
+          UniversalConstants.borderRadiusFull,
+        ),
+      ),
+    ];
+
+    CustomAlertDialog.showCustomForm(
+      context,
+      title: i18n.translate('change_password'),
+      formContent: formContent,
+      actions: actions,
+      customIcon: Icon(
+        LineIcons.lock,
+        color: Theme.of(context).colorScheme.primary,
+        size: 60.0,
+      ),
     );
   }
 

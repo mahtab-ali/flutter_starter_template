@@ -17,6 +17,7 @@ class CustomAlertDialog extends StatelessWidget {
   final bool showCloseButton;
   final EdgeInsets contentPadding;
   final AlertType alertType;
+  final Widget? contentWidget; // Added this parameter
 
   const CustomAlertDialog({
     super.key,
@@ -30,6 +31,7 @@ class CustomAlertDialog extends StatelessWidget {
       UniversalConstants.spacingXLarge,
     ),
     this.alertType = AlertType.custom,
+    this.contentWidget, // Added this parameter
   });
 
   @override
@@ -110,14 +112,17 @@ class CustomAlertDialog extends StatelessWidget {
                       ),
                     ),
                   const SizedBox(height: UniversalConstants.spacingMedium),
-                  Text(
-                    message,
-                    style:
-                        isDark
-                            ? AppTextStyles.bodyLargeDark(locale: locale)
-                            : AppTextStyles.bodyLargeLight(locale: locale),
-                    textAlign: TextAlign.center,
-                  ),
+                  if (contentWidget != null)
+                    contentWidget!
+                  else
+                    Text(
+                      message,
+                      style:
+                          isDark
+                              ? AppTextStyles.bodyLargeDark(locale: locale)
+                              : AppTextStyles.bodyLargeLight(locale: locale),
+                      textAlign: TextAlign.center,
+                    ),
                   const SizedBox(height: UniversalConstants.spacingXXLarge),
                   if (actions.isNotEmpty)
                     Center(
@@ -341,6 +346,37 @@ class CustomAlertDialog extends StatelessWidget {
             actions: actions,
             showCloseButton: false,
             alertType: AlertType.warning,
+          ),
+    );
+  }
+
+  static Future<void> showCustomForm(
+    BuildContext context, {
+    String title = 'Form',
+    required Widget formContent,
+    required List<Widget> actions,
+    bool showCloseButton = false,
+    Widget? customIcon,
+  }) {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black.withAlpha(200),
+      builder:
+          (context) => CustomAlertDialog(
+            title: title,
+            message: "", // Empty message as we're using custom content
+            actions: actions,
+            showCloseButton: showCloseButton,
+            alertType: AlertType.custom,
+            icon: customIcon,
+            contentPadding: EdgeInsets.only(
+              top: UniversalConstants.spacingMedium,
+              left: UniversalConstants.spacingLarge,
+              right: UniversalConstants.spacingLarge,
+              bottom: UniversalConstants.spacingLarge,
+            ),
+            contentWidget: formContent,
           ),
     );
   }
