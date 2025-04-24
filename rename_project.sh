@@ -1,17 +1,10 @@
 #!/bin/bash
 
 # Flutter Project Rename Script
-# This script reads the current project name from AppConfig and renames it to a new name
-# Usage: ./rename_project.sh <new_project_name>
+# This script reads the current project name from AppConfig and prompts for a new name
+# Usage: ./rename_project.sh
 
 set -e  # Exit on any error
-
-# Check if a new project name was provided
-if [ -z "$1" ]; then
-  echo "Error: Please provide a new project name"
-  echo "Usage: ./rename_project.sh <new_project_name>"
-  exit 1
-fi
 
 # Read the current project name from AppConfig.dart
 CONFIG_FILE="lib/config/app_config.dart"
@@ -28,19 +21,49 @@ if [ -z "$OLD_NAME" ]; then
   exit 1
 fi
 
-NEW_NAME=$1
-
 # Extract bundle IDs
 OLD_BUNDLE_ID=$(grep "bundleId = '" "$CONFIG_FILE" | sed "s/.*bundleId = '\([^']*\)'.*/\1/")
 if [ -z "$OLD_BUNDLE_ID" ]; then
   OLD_BUNDLE_ID="com.example.$OLD_NAME"
 fi
-NEW_BUNDLE_ID="com.example.$NEW_NAME"
+
+# Extract the bundle ID prefix (e.g., "com.app" from "com.app.loopwise")
+BUNDLE_PREFIX=$(echo "$OLD_BUNDLE_ID" | sed "s/\(.*\)\.$OLD_NAME/\1/")
+
+# Create capitalized version of the package name (for imports like 'package:Loopwise/')
+OLD_NAME_CAPITALIZED="$(tr '[:lower:]' '[:upper:]' <<< ${OLD_NAME:0:1})${OLD_NAME:1}"
+
+# Display current project information
+echo "📋 Current Project Information"
+echo "  Name: $OLD_NAME"
+echo "  Capitalized Name: $OLD_NAME_CAPITALIZED"
+echo "  Bundle ID: $OLD_BUNDLE_ID"
+echo ""
+
+# Prompt user for new project name
+echo "Enter a new project name (leave empty to keep '$OLD_NAME'):"
+read NEW_NAME
+
+# If no name provided, exit
+if [ -z "$NEW_NAME" ]; then
+  echo "No new name provided. Keeping current name: $OLD_NAME"
+  exit 0
+fi
+
+# Create capitalized version of the new name
+NEW_NAME_CAPITALIZED="$(tr '[:lower:]' '[:upper:]' <<< ${NEW_NAME:0:1})${NEW_NAME:1}"
+
+# Use the same prefix for the new bundle ID
+NEW_BUNDLE_ID="$BUNDLE_PREFIX.$NEW_NAME"
 
 # Display rename information
+echo ""
 echo "🚀 Renaming Flutter project"
 echo "  From: $OLD_NAME"
 echo "  To:   $NEW_NAME"
+echo ""
+echo "  From capitalized: $OLD_NAME_CAPITALIZED"
+echo "  To capitalized:   $NEW_NAME_CAPITALIZED"
 echo ""
 echo "  From bundle ID: $OLD_BUNDLE_ID"
 echo "  To bundle ID:   $NEW_BUNDLE_ID"
@@ -67,12 +90,30 @@ if [ "$(uname)" == "Darwin" ]; then  # macOS
   sed -i '' "s/packageName = '$OLD_NAME'/packageName = '$NEW_NAME'/" $CONFIG_FILE
   sed -i '' "s/bundleId = '$OLD_BUNDLE_ID'/bundleId = '$NEW_BUNDLE_ID'/" $CONFIG_FILE
   sed -i '' "s/appIdAndroid = '$OLD_BUNDLE_ID'/appIdAndroid = '$NEW_BUNDLE_ID'/" $CONFIG_FILE
-  sed -i '' "s/appIdIos = 'com.example.[^']*'/appIdIos = 'com.example.${NEW_NAME//-/}'/" $CONFIG_FILE
+  
+  # Extract iOS bundle ID and format
+  OLD_IOS_ID=$(grep "appIdIos = '" "$CONFIG_FILE" | sed "s/.*appIdIos = '\([^']*\)'.*/\1/")
+  if [ -n "$OLD_IOS_ID" ]; then
+    IOS_PREFIX=$(echo "$OLD_IOS_ID" | sed "s/\(.*\)\.[^.]*/\1/")
+    NEW_IOS_ID="$IOS_PREFIX.${NEW_NAME//-/}"
+    sed -i '' "s/appIdIos = '$OLD_IOS_ID'/appIdIos = '$NEW_IOS_ID'/" $CONFIG_FILE
+  else
+    sed -i '' "s/appIdIos = 'com.example.[^']*'/appIdIos = '$BUNDLE_PREFIX.${NEW_NAME//-/}'/" $CONFIG_FILE
+  fi
 else  # Linux and others
   sed -i "s/packageName = '$OLD_NAME'/packageName = '$NEW_NAME'/" $CONFIG_FILE
   sed -i "s/bundleId = '$OLD_BUNDLE_ID'/bundleId = '$NEW_BUNDLE_ID'/" $CONFIG_FILE
   sed -i "s/appIdAndroid = '$OLD_BUNDLE_ID'/appIdAndroid = '$NEW_BUNDLE_ID'/" $CONFIG_FILE
-  sed -i "s/appIdIos = 'com.example.[^']*'/appIdIos = 'com.example.${NEW_NAME//-/}'/" $CONFIG_FILE
+  
+  # Extract iOS bundle ID and format
+  OLD_IOS_ID=$(grep "appIdIos = '" "$CONFIG_FILE" | sed "s/.*appIdIos = '\([^']*\)'.*/\1/")
+  if [ -n "$OLD_IOS_ID" ]; then
+    IOS_PREFIX=$(echo "$OLD_IOS_ID" | sed "s/\(.*\)\.[^.]*/\1/")
+    NEW_IOS_ID="$IOS_PREFIX.${NEW_NAME//-/}"
+    sed -i "s/appIdIos = '$OLD_IOS_ID'/appIdIos = '$NEW_IOS_ID'/" $CONFIG_FILE
+  else
+    sed -i "s/appIdIos = 'com.example.[^']*'/appIdIos = '$BUNDLE_PREFIX.${NEW_NAME//-/}'/" $CONFIG_FILE
+  fi
 fi
 
 # 3. Update import statements in all Dart files
@@ -81,9 +122,13 @@ DART_FILES=$(find lib -name "*.dart")
 for file in $DART_FILES; do
   echo "   Processing $file"
   if [ "$(uname)" == "Darwin" ]; then  # macOS
+    # Update lowercase version
     sed -i '' "s/package:$OLD_NAME\//package:$NEW_NAME\//g" "$file"
+    # Update capitalized version
+    sed -i '' "s/package:$OLD_NAME_CAPITALIZED\//package:$NEW_NAME_CAPITALIZED\//g" "$file"
   else  # Linux and others
     sed -i "s/package:$OLD_NAME\//package:$NEW_NAME\//g" "$file"
+    sed -i "s/package:$OLD_NAME_CAPITALIZED\//package:$NEW_NAME_CAPITALIZED\//g" "$file"
   fi
 done
 
@@ -121,10 +166,28 @@ if [ -f "$IOS_INFO_PLIST" ]; then
   echo "   Processing $IOS_INFO_PLIST"
   if [ "$(uname)" == "Darwin" ]; then  # macOS
     sed -i '' "s/<string>$OLD_NAME<\/string>/<string>$NEW_NAME<\/string>/" "$IOS_INFO_PLIST"
-    sed -i '' "s/com.example.[^<]*/com.example.${NEW_NAME//-/}/" "$IOS_INFO_PLIST"
+    
+    # Use the same iOS bundle ID format as in AppConfig.dart
+    OLD_IOS_ID=$(grep "appIdIos = '" "$CONFIG_FILE" | sed "s/.*appIdIos = '\([^']*\)'.*/\1/")
+    if [ -n "$OLD_IOS_ID" ]; then
+      IOS_PREFIX=$(echo "$OLD_IOS_ID" | sed "s/\(.*\)\.[^.]*/\1/")
+      NEW_IOS_ID="$IOS_PREFIX.${NEW_NAME//-/}"
+      sed -i '' "s/$OLD_IOS_ID/$NEW_IOS_ID/" "$IOS_INFO_PLIST"
+    else
+      sed -i '' "s/$BUNDLE_PREFIX\.[^<]*/$BUNDLE_PREFIX.${NEW_NAME//-/}/" "$IOS_INFO_PLIST"
+    fi
   else  # Linux and others
     sed -i "s/<string>$OLD_NAME<\/string>/<string>$NEW_NAME<\/string>/" "$IOS_INFO_PLIST"
-    sed -i "s/com.example.[^<]*/com.example.${NEW_NAME//-/}/" "$IOS_INFO_PLIST"
+    
+    # Use the same iOS bundle ID format as in AppConfig.dart
+    OLD_IOS_ID=$(grep "appIdIos = '" "$CONFIG_FILE" | sed "s/.*appIdIos = '\([^']*\)'.*/\1/")
+    if [ -n "$OLD_IOS_ID" ]; then
+      IOS_PREFIX=$(echo "$OLD_IOS_ID" | sed "s/\(.*\)\.[^.]*/\1/")
+      NEW_IOS_ID="$IOS_PREFIX.${NEW_NAME//-/}"
+      sed -i "s/$OLD_IOS_ID/$NEW_IOS_ID/" "$IOS_INFO_PLIST"
+    else
+      sed -i "s/$BUNDLE_PREFIX\.[^<]*/$BUNDLE_PREFIX.${NEW_NAME//-/}/" "$IOS_INFO_PLIST"
+    fi
   fi
 fi
 

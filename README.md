@@ -37,22 +37,24 @@ cd flutter_starter_template
 
 ### 2. Rename the project (Optional)
 
-This template includes a utility script to rename the project for your own use:
+This template includes an interactive utility script to rename the project for your own use:
 
 ```bash
 # Make the script executable (if needed)
 chmod +x rename_project.sh
 
-# Run the script with your desired project name
-./rename_project.sh your_project_name
+# Run the script (no arguments needed)
+./rename_project.sh
 ```
 
 The script will:
+- Show your current project name and bundle ID
+- Prompt you to enter a new project name
+- Display what will change before asking for confirmation
 - Update the package name in pubspec.yaml
 - Modify app_config.dart with your project name
 - Update all import statements in Dart files
 - Configure Android and iOS package names and bundle identifiers
-- Fix references in platform-specific configuration files
 
 After running the script:
 ```bash
