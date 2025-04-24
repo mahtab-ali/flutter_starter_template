@@ -6,9 +6,9 @@ import '../../domain/usecases/theme/set_system_theme_status_use_case.dart';
 import '../../domain/usecases/theme/set_theme_mode_use_case.dart';
 import '../../presentation/common/bloc/app_bloc.dart';
 import '../../presentation/auth/bloc/app_auth_bloc.dart';
-import '../../presentation/settings/bloc/localization_bloc.dart';
+import '../../presentation/settings/bloc/localization/localization_bloc.dart';
 import '../../presentation/onboarding/bloc/onboarding_bloc.dart';
-import '../../presentation/settings/bloc/theme_bloc.dart';
+import '../../presentation/settings/bloc/theme/theme_bloc.dart';
 import 'injection_container.dart';
 
 /// Utility class to provide all BLoC providers

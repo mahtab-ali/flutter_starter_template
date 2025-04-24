@@ -5,11 +5,11 @@ import 'package:starter_template_flutter/presentation/auth/bloc/app_auth_bloc.da
 import 'package:starter_template_flutter/presentation/auth/bloc/app_auth_event.dart';
 import 'package:starter_template_flutter/presentation/common/bloc/app_bloc.dart';
 import 'package:starter_template_flutter/presentation/common/bloc/app_state.dart';
-import 'package:starter_template_flutter/presentation/settings/bloc/localization_bloc.dart';
-import 'package:starter_template_flutter/presentation/settings/bloc/localization_event.dart';
-import 'package:starter_template_flutter/presentation/settings/bloc/theme_bloc.dart';
-import 'package:starter_template_flutter/presentation/settings/bloc/theme_event.dart';
-import 'package:starter_template_flutter/presentation/settings/bloc/theme_state.dart';
+import 'package:starter_template_flutter/presentation/settings/bloc/localization/localization_bloc.dart';
+import 'package:starter_template_flutter/presentation/settings/bloc/localization/localization_event.dart';
+import 'package:starter_template_flutter/presentation/settings/bloc/theme/theme_bloc.dart';
+import 'package:starter_template_flutter/presentation/settings/bloc/theme/theme_event.dart';
+import 'package:starter_template_flutter/presentation/settings/bloc/theme/theme_state.dart';
 import 'package:starter_template_flutter/config/app_config.dart';
 import 'package:starter_template_flutter/config/localization/app_localizations.dart';
 import 'package:starter_template_flutter/config/routes.dart';

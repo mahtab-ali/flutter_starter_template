@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../core/errors/result.dart';
+import '../../../../core/errors/result.dart';
 import 'package:starter_template_flutter/domain/usecases/theme/get_system_theme_status_use_case.dart';
 import 'package:starter_template_flutter/domain/usecases/theme/get_theme_mode_use_case.dart';
 import 'package:starter_template_flutter/domain/usecases/theme/set_system_theme_status_use_case.dart';
