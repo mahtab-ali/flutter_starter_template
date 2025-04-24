@@ -1,6 +1,6 @@
 # Flutter Starter Template
 
-A comprehensive Flutter starter template with authentication, localization, themes, BLoC state management, and beautiful UI components.
+A comprehensive Flutter starter template that implements Clean Architecture with a modular approach, featuring authentication, localization, theming, BLoC state management, and beautiful UI components.
 
 ## 🌟 Features
 
@@ -17,6 +17,8 @@ A comprehensive Flutter starter template with authentication, localization, them
 - 👤 **Profile Management** - Comprehensive user profile with editing capabilities
 - 🔒 **Security Features** - Password change functionality and secure data handling
 - 🛠️ **Error Handling** - Toast notifications and form validations
+- 🏗️ **Clean Architecture** - Well-defined separation of concerns
+- 💉 **Dependency Injection** - Service locator pattern for better testability
 
 ## 📋 Prerequisites
 
@@ -54,53 +56,370 @@ SUPABASE_ANON_KEY=your-supabase-anon-key
 flutter run
 ```
 
+## 🏗️ Clean Architecture Overview
+
+This template follows Clean Architecture principles to create a maintainable, testable, and scalable application. The architecture is divided into three main layers:
+
+### 1. Presentation Layer
+- Contains UI components, screens, widgets
+- Handles user interaction and displays data
+- Implements BLoC pattern for state management
+- Location: `lib/presentation/`
+
+### 2. Domain Layer
+- Contains business logic and rules
+- Defines entities, use cases, and repository interfaces
+- Pure Dart code with no dependencies on external frameworks
+- Location: `lib/domain/`
+
+### 3. Data Layer
+- Implements repositories defined in the domain layer
+- Manages data sources (remote API, local storage)
+- Handles data transformation between entities and models
+- Location: `lib/data/`
+
+### Flow Between Layers
+
+1. **User Interaction Flow**:
+   - User interacts with the UI (Presentation Layer)
+   - BLoC dispatches events and converts them to use case calls
+   - Use cases execute business logic (Domain Layer)
+   - Repositories retrieve/manipulate data (Data Layer)
+   - Data flows back up through the layers to update the UI
+
+2. **Dependency Direction**:
+   - Outer layers depend on inner layers (Presentation → Domain ← Data)
+   - Domain layer has no dependencies on other layers
+   - This ensures the business logic remains isolated and testable
+
 ## 📁 Project Structure
 
 ```
 lib/
-├── blocs/                 # BLoCs for state management
-│   ├── app/               # App state management
-│   ├── auth/              # Authentication BLoC
-│   ├── localization/      # Language BLoC  
-│   ├── onboarding/        # Onboarding BLoC
-│   └── theme/             # Theme BLoC
 ├── config/                # App configuration
 │   ├── app_config.dart    # Global app configuration
-│   └── routes.dart        # Route definitions
+│   ├── routes.dart        # Route definitions
+│   ├── localization/      # Localization configuration
+│   └── themes/            # Theme configuration
 ├── core/                  # Core functionality
-│   └── dependency_injection.dart  # Service locator
-├── i18n/                  # Localization
-│   └── app_localizations.dart     # Translation utilities
-├── models/                # Data models
-│   └── user_model.dart    # User data model
-├── screens/               # All app screens
-│   ├── auth/              # Authentication screens
-│   ├── home/              # Home screens
-│   ├── onboarding/        # Onboarding screens
-│   ├── profile/           # User profile screen
-│   ├── settings/          # Settings screen
-│   └── splash/            # Splash screen
-├── services/              # Services and API clients
-├── themes/                # Theme definitions
-│   ├── app_colors.dart    # Color definitions
-│   ├── app_gradients.dart # Gradient definitions
-│   ├── app_text_styles.dart # Typography system
-│   ├── theme_data.dart    # Theme configuration
-│   └── universal_constants.dart # Spacing, sizing constants
-├── ui/                    # Reusable UI components
-│   ├── app_bar/           # Custom app bars
-│   ├── bottom_sheets/     # Bottom sheet components
-│   ├── buttons/           # Button components
-│   ├── cards/             # Card components
-│   ├── dialogs/           # Dialog components
-│   └── inputs/            # Input field components
-├── utils/                 # Utility classes
-│   ├── helper.dart        # Helper functions
-│   ├── keyboard_util.dart # Keyboard utilities
-│   ├── toast_util.dart    # Toast notifications
-│   └── validators.dart    # Form validation logic
-├── widgets/               # Complex widgets
+│   ├── constants/         # App constants
+│   ├── di/                # Dependency injection
+│   ├── errors/            # Error handling
+│   ├── network/           # Network utilities
+│   ├── services/          # App-wide services
+│   └── utils/             # Utility functions
+├── data/                  # Data layer
+│   ├── datasources/       # Data sources
+│   │   ├── local/         # Local storage sources
+│   │   └── remote/        # Remote API sources
+│   ├── models/            # Data models
+│   └── repositories/      # Repository implementations
+├── domain/                # Domain layer
+│   ├── entities/          # Business entities
+│   ├── repositories/      # Repository interfaces
+│   └── usecases/          # Business logic use cases
+├── presentation/          # Presentation layer
+│   ├── app.dart           # Main app widget
+│   ├── auth/              # Authentication features
+│   │   ├── bloc/          # Authentication BLoC
+│   │   ├── pages/         # Authentication screens
+│   │   └── widgets/       # Authentication widgets
+│   ├── common/            # Shared UI components
+│   ├── home/              # Home screen features
+│   ├── onboarding/        # Onboarding features
+│   ├── profile/           # User profile features
+│   ├── settings/          # App settings features
+│   └── navigation/        # Navigation services
 └── main.dart              # App entry point
+```
+
+## 🧪 Adding a New Module
+
+A module is a self-contained feature with its own presentation, domain, and data components. Follow these steps to add a new module:
+
+### 1. Plan Your Module
+
+First, define what your module will do and identify:
+- The UI components needed
+- The entities and models required
+- The business logic operations (use cases)
+- Data sources needed (API endpoints, local storage)
+
+### 2. Create Domain Layer Components
+
+```dart
+// 1. Create entity in domain/entities/
+class MyEntity extends Equatable {
+  final String id;
+  final String name;
+  
+  const MyEntity({required this.id, required this.name});
+  
+  @override
+  List<Object> get props => [id, name];
+}
+
+// 2. Define repository interface in domain/repositories/
+abstract class MyRepository {
+  Future<Either<Failure, List<MyEntity>>> getAllItems();
+  Future<Either<Failure, MyEntity>> getItemById(String id);
+  Future<Either<Failure, void>> saveItem(MyEntity item);
+}
+
+// 3. Create use cases in domain/usecases/my_module/
+class GetAllItemsUseCase {
+  final MyRepository repository;
+  
+  GetAllItemsUseCase(this.repository);
+  
+  Future<Either<Failure, List<MyEntity>>> call() {
+    return repository.getAllItems();
+  }
+}
+```
+
+### 3. Implement Data Layer
+
+```dart
+// 1. Create data models in data/models/
+class MyModel extends MyEntity {
+  const MyModel({required String id, required String name})
+      : super(id: id, name: name);
+  
+  factory MyModel.fromJson(Map<String, dynamic> json) {
+    return MyModel(
+      id: json['id'],
+      name: json['name'],
+    );
+  }
+  
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+    };
+  }
+  
+  factory MyModel.fromEntity(MyEntity entity) {
+    return MyModel(id: entity.id, name: entity.name);
+  }
+}
+
+// 2. Create data sources in data/datasources/
+abstract class MyRemoteDataSource {
+  Future<List<MyModel>> getAllItems();
+  Future<MyModel> getItemById(String id);
+  Future<void> saveItem(MyModel item);
+}
+
+class MyRemoteDataSourceImpl implements MyRemoteDataSource {
+  final SupabaseClient supabaseClient;
+  
+  MyRemoteDataSourceImpl(this.supabaseClient);
+  
+  @override
+  Future<List<MyModel>> getAllItems() async {
+    final response = await supabaseClient.from('my_table').select().execute();
+    return (response.data as List)
+        .map((item) => MyModel.fromJson(item))
+        .toList();
+  }
+  
+  // ... implement other methods
+}
+
+// 3. Implement repository in data/repositories/
+class MyRepositoryImpl implements MyRepository {
+  final MyRemoteDataSource remoteDataSource;
+  final NetworkInfo networkInfo;
+  
+  MyRepositoryImpl({
+    required this.remoteDataSource,
+    required this.networkInfo,
+  });
+  
+  @override
+  Future<Either<Failure, List<MyEntity>>> getAllItems() async {
+    if (await networkInfo.isConnected) {
+      try {
+        final result = await remoteDataSource.getAllItems();
+        return Right(result);
+      } catch (e) {
+        return Left(ServerFailure());
+      }
+    } else {
+      return Left(NetworkFailure());
+    }
+  }
+  
+  // ... implement other methods
+}
+```
+
+### 4. Create Presentation Layer
+
+```dart
+// 1. Define BLoC events
+abstract class MyEvent extends Equatable {
+  @override
+  List<Object> get props => [];
+}
+
+class FetchAllItemsEvent extends MyEvent {}
+
+// 2. Define BLoC states
+abstract class MyState extends Equatable {
+  @override
+  List<Object> get props => [];
+}
+
+class MyInitial extends MyState {}
+class MyLoading extends MyState {}
+class MyLoaded extends MyState {
+  final List<MyEntity> items;
+  
+  MyLoaded(this.items);
+  
+  @override
+  List<Object> get props => [items];
+}
+class MyError extends MyState {
+  final String message;
+  
+  MyError(this.message);
+  
+  @override
+  List<Object> get props => [message];
+}
+
+// 3. Implement BLoC
+class MyBloc extends Bloc<MyEvent, MyState> {
+  final GetAllItemsUseCase getAllItemsUseCase;
+  
+  MyBloc({required this.getAllItemsUseCase}) : super(MyInitial()) {
+    on<FetchAllItemsEvent>(_onFetchAllItems);
+  }
+  
+  Future<void> _onFetchAllItems(
+    FetchAllItemsEvent event,
+    Emitter<MyState> emit,
+  ) async {
+    emit(MyLoading());
+    final result = await getAllItemsUseCase();
+    result.fold(
+      (failure) => emit(MyError(_mapFailureToMessage(failure))),
+      (items) => emit(MyLoaded(items)),
+    );
+  }
+  
+  String _mapFailureToMessage(Failure failure) {
+    // Map failures to user-friendly messages
+    switch (failure.runtimeType) {
+      case ServerFailure:
+        return 'Server error occurred. Please try again.';
+      case NetworkFailure:
+        return 'No internet connection. Please check your connection.';
+      default:
+        return 'Unexpected error occurred. Please try again.';
+    }
+  }
+}
+
+// 4. Create UI pages and widgets
+class MyPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => sl<MyBloc>()..add(FetchAllItemsEvent()),
+      child: Scaffold(
+        appBar: CustomAppBar(title: 'My Module'),
+        body: BlocBuilder<MyBloc, MyState>(
+          builder: (context, state) {
+            if (state is MyLoading) {
+              return Center(child: CircularProgressIndicator());
+            } else if (state is MyLoaded) {
+              return ListView.builder(
+                itemCount: state.items.length,
+                itemBuilder: (context, index) {
+                  final item = state.items[index];
+                  return ListTile(title: Text(item.name));
+                },
+              );
+            } else if (state is MyError) {
+              return Center(child: Text(state.message));
+            }
+            return Center(child: Text('Press the button to load items'));
+          },
+        ),
+      ),
+    );
+  }
+}
+```
+
+### 5. Register Dependencies
+
+Update the dependency injection container in `lib/core/di/injection_container.dart`:
+
+```dart
+// Add at the initialization function or in a separate function
+Future<void> _initMyModule() async {
+  // BLoC
+  sl.registerFactory(() => MyBloc(getAllItemsUseCase: sl()));
+
+  // Use cases
+  sl.registerLazySingleton(() => GetAllItemsUseCase(sl()));
+
+  // Repository
+  sl.registerLazySingleton<MyRepository>(
+    () => MyRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Data sources
+  sl.registerLazySingleton<MyRemoteDataSource>(
+    () => MyRemoteDataSourceImpl(sl()),
+  );
+}
+```
+
+### 6. Add to Navigation Routes
+
+Update `lib/config/routes.dart` to include your new module:
+
+```dart
+// Add route constant
+static const String myModule = '/my-module';
+
+// Add to route generator
+static Route<dynamic> onGenerateRoute(RouteSettings settings) {
+  switch (settings.name) {
+    // ... existing routes
+    case myModule:
+      return MaterialPageRoute(builder: (_) => MyPage());
+    // ...
+  }
+}
+```
+
+## 🤝 Module Integration Flow
+
+The template uses a dependency injection system (powered by get_it) to connect all the layers:
+
+1. **Register Dependencies**: All components are registered in the service locator
+2. **BLoCs Access Use Cases**: Presentation layer BLoCs receive required use cases
+3. **Use Cases Access Repositories**: Domain layer use cases receive repository implementations
+4. **Repositories Access Data Sources**: Data layer repositories receive data source implementations
+
+This flow ensures loose coupling between components and facilitates testing and modifiability.
+
+### Flow Visualization
+
+```
+UI → BLoC → UseCase → Repository Interface ← Repository Implementation → DataSource
+                        (Domain Layer)         (Data Layer)
 ```
 
 ## 🧩 UI Components
@@ -491,20 +810,20 @@ BlocListener<AppAuthBloc, AppAuthState>(
 ## 🛠️ Customization
 
 ### Adding New Screens
-1. Create a new screen in the `lib/screens/` directory
+1. Create a new screen in the appropriate module under `lib/presentation/` directory
 2. Add routes in `lib/config/routes.dart`
 
 ### Adding New Languages
 1. Create a new JSON file in `assets/i18n/` (e.g., `fr.json`)
-2. Add the locale to `supportedLocales` in `lib/config/app_config.dart`
+2. Add the locale to `supportedLocales` in `lib/presentation/app.dart` and in the `LocalizationRepositoryImpl` initialization
 
 ### Modifying Theme
-1. Edit the theme definitions in `lib/themes/theme_data.dart`
-2. Customize colors in `lib/themes/app_colors.dart`
-3. Update gradients in `lib/themes/app_gradients.dart`
+1. Edit the theme definitions in `lib/config/themes/theme_data.dart`
+2. Customize colors in a theme colors file
+3. Update gradients in a theme gradients file
 
 ### Adding New UI Components
-1. Create a new file in the appropriate directory under `lib/ui/`
+1. Create a new file in the appropriate directory under `lib/presentation/common/` or in your module's `widgets/` directory
 2. Follow the existing component patterns for consistency
 3. Use the universal constants for spacing and sizing
 
@@ -521,7 +840,8 @@ To add Firebase to this template:
    firebase_auth: ^latest_version
    cloud_firestore: ^latest_version
    ```
-4. Update the auth BLoC to use Firebase Auth instead of Supabase
+4. Create Firebase data sources implementing the existing interfaces
+5. Update the dependency injection to use Firebase implementations instead of Supabase
 
 ### 2. State Management Alternatives
 
@@ -535,7 +855,7 @@ While this template uses BLoC, you can easily switch to other state management s
 
 The template is structured to easily integrate with any backend:
 
-1. Create API client classes in the `services/` directory
+1. Create API client classes in the `data/datasources/remote/` directory
 2. Use repositories to abstract data access for BLoCs
 3. Handle loading states and errors consistently using the provided UI components
 
@@ -550,3 +870,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [flutter_bloc](https://pub.dev/packages/flutter_bloc) - State management
 - [flutter_localizations](https://api.flutter.dev/flutter/flutter_localizations/flutter_localizations-library.html) - Localization support
 - [line_icons](https://pub.dev/packages/line_icons) - Beautiful line icons
+- [get_it](https://pub.dev/packages/get_it) - Dependency injection
+- [dartz](https://pub.dev/packages/dartz) - Functional programming utilities
