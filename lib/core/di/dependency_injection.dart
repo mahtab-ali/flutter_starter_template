@@ -16,8 +16,8 @@ import 'package:starter_template_flutter/presentation/auth/bloc/app_auth_bloc.da
 import 'package:starter_template_flutter/presentation/auth/bloc/app_auth_event.dart';
 import 'package:starter_template_flutter/presentation/common/bloc/app_bloc.dart';
 import 'package:starter_template_flutter/presentation/onboarding/bloc/onboarding_bloc.dart';
-import 'package:starter_template_flutter/presentation/settings/bloc/localization_bloc.dart';
-import 'package:starter_template_flutter/presentation/settings/bloc/theme_bloc.dart';
+import 'package:starter_template_flutter/presentation/settings/bloc/localization/localization_bloc.dart';
+import 'package:starter_template_flutter/presentation/settings/bloc/theme/theme_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../data/repositories/auth_repository_impl.dart';

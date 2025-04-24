@@ -35,13 +35,40 @@ git clone https://github.com/yourusername/flutter_starter_template.git
 cd flutter_starter_template
 ```
 
-### 2. Install dependencies
+### 2. Rename the project (Optional)
+
+This template includes a utility script to rename the project for your own use:
+
+```bash
+# Make the script executable (if needed)
+chmod +x rename_project.sh
+
+# Run the script with your desired project name
+./rename_project.sh your_project_name
+```
+
+The script will:
+- Update the package name in pubspec.yaml
+- Modify app_config.dart with your project name
+- Update all import statements in Dart files
+- Configure Android and iOS package names and bundle identifiers
+- Fix references in platform-specific configuration files
+
+After running the script:
+```bash
+# Clean the project to rebuild with new name
+flutter clean
+# Get dependencies
+flutter pub get
+```
+
+### 3. Install dependencies
 
 ```bash
 flutter pub get
 ```
 
-### 3. Configure environment variables
+### 4. Configure environment variables
 
 Create a `.env` file in the project root with your Supabase details:
 
@@ -50,7 +77,7 @@ SUPABASE_URL=https://your-supabase-project.supabase.co
 SUPABASE_ANON_KEY=your-supabase-anon-key
 ```
 
-### 4. Run the app
+### 5. Run the app
 
 ```bash
 flutter run

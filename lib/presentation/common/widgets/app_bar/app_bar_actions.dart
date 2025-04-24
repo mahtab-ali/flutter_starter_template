@@ -4,11 +4,11 @@ import 'package:line_icons/line_icons.dart';
 import 'package:starter_template_flutter/config/localization/app_localizations.dart';
 import 'package:starter_template_flutter/presentation/common/widgets/bottom_sheets/app_bottom_sheet.dart';
 
-import '../../../../presentation/settings/bloc/localization_bloc.dart';
-import '../../../../presentation/settings/bloc/localization_event.dart';
-import '../../../../presentation/settings/bloc/theme_bloc.dart';
-import '../../../../presentation/settings/bloc/theme_event.dart';
-import '../../../../presentation/settings/bloc/theme_state.dart';
+import '../../../settings/bloc/localization/localization_bloc.dart';
+import '../../../settings/bloc/localization/localization_event.dart';
+import '../../../settings/bloc/theme/theme_bloc.dart';
+import '../../../settings/bloc/theme/theme_event.dart';
+import '../../../settings/bloc/theme/theme_state.dart';
 
 class AppBarActions extends StatelessWidget {
   final bool showThemeToggle;

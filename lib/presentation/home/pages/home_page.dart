@@ -3,11 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:starter_template_flutter/config/localization/app_localizations.dart';
 import 'package:starter_template_flutter/config/routes.dart';
-import 'package:starter_template_flutter/config/themes/app_text_styles.dart';
 import 'package:starter_template_flutter/core/utils/toast_util.dart';
 import 'package:starter_template_flutter/data/models/response/user_model.dart';
 import 'package:starter_template_flutter/presentation/auth/bloc/app_auth_bloc.dart';
 import 'package:starter_template_flutter/presentation/auth/bloc/app_auth_state.dart';
+import 'package:starter_template_flutter/presentation/home/widgets/home_description_section.dart';
+import 'package:starter_template_flutter/presentation/home/widgets/home_welcome_section.dart';
 
 import '../../../presentation/common/widgets/app_bar/custom_app_bar.dart';
 
@@ -46,8 +47,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final i18n = AppLocalizations.of(context);
-    final locale = i18n.locale;
-    final isDark = theme.brightness == Brightness.dark;
 
     return BlocListener<AppAuthBloc, AppAuthState>(
       listener: (context, state) {
@@ -86,34 +85,9 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                i18n.translate('flutter_starter_template'),
-                style:
-                    isDark
-                        ? AppTextStyles.headingLargeDark(locale: locale)
-                        : AppTextStyles.headingLargeLight(locale: locale),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                i18n
-                    .translate('welcome_message')
-                    .replaceAll('{name}', _displayName),
-                style:
-                    isDark
-                        ? AppTextStyles.bodyLargeDark(locale: locale)
-                        : AppTextStyles.bodyLargeLight(locale: locale),
-                textAlign: TextAlign.center,
-              ),
+              HomeWelcomeSection(displayName: _displayName),
               const SizedBox(height: 24),
-              Text(
-                i18n.translate('template_description'),
-                style:
-                    isDark
-                        ? AppTextStyles.bodyMediumDark(locale: locale)
-                        : AppTextStyles.bodyMediumLight(locale: locale),
-                textAlign: TextAlign.center,
-              ),
+              const HomeDescriptionSection(),
             ],
           ),
         ),

@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:starter_template_flutter/config/localization/app_localizations.dart';
-import 'package:starter_template_flutter/presentation/settings/bloc/localization_state.dart';
-import 'package:starter_template_flutter/presentation/settings/bloc/theme_state.dart';
+import 'package:starter_template_flutter/presentation/settings/bloc/localization/localization_state.dart';
+import 'package:starter_template_flutter/presentation/settings/bloc/theme/theme_state.dart';
 
 import '../config/themes/theme_data.dart';
 import '../config/routes.dart';
@@ -12,8 +12,8 @@ import '../core/di/bloc_providers.dart';
 import '../core/di/injection_container.dart';
 import '../presentation/auth/bloc/app_auth_bloc.dart';
 import '../presentation/auth/bloc/app_auth_event.dart';
-import '../presentation/settings/bloc/localization_bloc.dart';
-import '../presentation/settings/bloc/theme_bloc.dart';
+import 'settings/bloc/localization/localization_bloc.dart';
+import 'settings/bloc/theme/theme_bloc.dart';
 
 /// The main application widget
 class App extends StatelessWidget {
