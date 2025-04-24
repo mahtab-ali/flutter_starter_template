@@ -8,7 +8,12 @@ class AppConfig {
 
   // App info
   static const String appName = 'Flutter Starter Template';
-  static const String appVersion = '1.0.0';
+  static const String packageName = 'starter_template_flutter';
+  static const String bundleId = 'com.example.starter_template_flutter';
+
+  // App identifiers for each platform
+  static const String appIdAndroid = 'com.example.starter_template_flutter';
+  static const String appIdIos = 'com.example.starterTemplateFlutter';
 
   // Supported locales
   static const List<Locale> supportedLocales = [
